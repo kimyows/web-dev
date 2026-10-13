@@ -4,3 +4,371 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bento Gallery — Aila Quimio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    /* ── Bento grid (desktop layout is drawn in grid-template-areas) ── */
+    .bento {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-auto-rows: 13rem;
+      gap: .75rem;
+    }
+
+    .bento-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1.1rem;
+      background: rgba(128, 128, 128, .2);
+      background: color-mix(in srgb, var(--p-text) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--p-text) 18%, transparent);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .bento-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 26px rgba(0, 0, 0, .35);
+    }
+
+    /* Placeholder icon (shows until you add an image) */
+    .bento-card > i {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem;
+      color: var(--p-text);
+      opacity: .35;
+    }
+
+    .bento-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+      transition: transform .5s ease;
+    }
+    .bento-card:hover img { transform: scale(1.05); }
+
+    /* Caption sits on a dark fade so it stays readable in both themes */
+    .bento-caption {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      z-index: 2;
+      padding: 2.5rem 1rem .9rem;
+      color: #fff;
+      background: linear-gradient(to top, rgba(0, 0, 0, .7), transparent);
+    }
+    .bento-caption h3 {
+      margin: 0;
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.15rem;
+    }
+    .bento-caption p {
+      margin: .15rem 0 0;
+      font-size: .62rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+
+    /* Each card gets its own grid area name */
+    .b-places { grid-area: places; }
+    .b-movies { grid-area: movies; }
+    .b-dream  { grid-area: dream; }
+    .b-home   { grid-area: home; }
+    .b-sound  { grid-area: sound; }
+    .b-joys   { grid-area: joys; }
+    .b-atomic { grid-area: atomic; }
+    .b-inspo  { grid-area: inspo; }
+    .b-adv    { grid-area: adv; }
+
+    /* Tablet: 2 columns, wide cards span both */
+    @media (min-width: 576px) {
+      .bento {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 12rem;
+        grid-auto-flow: dense;
+      }
+      .bento-card { grid-area: auto; }
+      .b-movies, .b-home, .b-inspo { grid-column: span 2; }
+    }
+
+    /* Desktop: the full bento arrangement */
+    @media (min-width: 992px) {
+      .bento {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 12.5rem 10.5rem 7.5rem 8.5rem;
+        grid-template-areas:
+          "places movies movies dream"
+          "home   home   sound  dream"
+          "joys   atomic sound  adv"
+          "joys   inspo  inspo  adv";
+      }
+      .b-places { grid-area: places; }
+      .b-movies { grid-area: movies; }
+      .b-dream  { grid-area: dream; }
+      .b-home   { grid-area: home; }
+      .b-sound  { grid-area: sound; }
+      .b-joys   { grid-area: joys; }
+      .b-atomic { grid-area: atomic; }
+      .b-inspo  { grid-area: inspo; }
+      .b-adv    { grid-area: adv; }
+    }
+
+    /* ── Web Development folder (clickable) ── */
+    .p-folder-wrap { display: flex; justify-content: flex-end; margin: 1.5rem 0 0; }
+    .p-folder {
+      --f-body: #1b1b22;
+      --f-tab: #2c2c36;
+      --f-line: rgba(255,255,255,.75);
+      --f-label-bg: #14141a;
+      --f-shadow: rgba(0,0,0,.45);
+      --f-accent: var(--p-accent, #8b9cff);
+      position: relative;
+      display: block;
+      width: min(340px, 100%);
+      aspect-ratio: 360 / 84;
+      color: var(--p-text, #fff);
+      text-decoration: none;
+      transition: transform .3s ease;
+    }
+    :root[data-theme="light"] .p-folder {
+      --f-body: #f1f1f3;
+      --f-tab: #cfd0d4;
+      --f-line: #15151a;
+      --f-label-bg: #ffffff;
+      --f-shadow: rgba(0,0,0,.18);
+    }
+    .p-folder:hover, .p-folder:focus-visible { transform: translateY(-4px); color: var(--p-text, #fff); }
+    .p-folder:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 6px; border-radius: 16px; }
+    .p-folder svg {
+      width: 100%; height: 100%; display: block; overflow: visible;
+      filter: drop-shadow(0 6px 12px var(--f-shadow));
+      transition: filter .3s ease;
+    }
+    .p-folder:hover svg { filter: drop-shadow(0 10px 18px var(--f-shadow)); }
+    .p-folder .f-tab, .p-folder .f-body {
+      stroke: var(--f-line); stroke-width: 2.5; stroke-linejoin: round;
+      transition: fill .3s ease, stroke .3s ease, transform .3s ease;
+    }
+    .p-folder .f-tab { fill: var(--f-tab); }
+    .p-folder .f-body { fill: var(--f-body); }
+    .p-folder:hover .f-tab { transform: translateY(-3px); }
+    .p-folder:hover .f-body, .p-folder:focus-visible .f-body { stroke: var(--f-accent); }
+    .p-folder:hover .f-tab, .p-folder:focus-visible .f-tab { stroke: var(--f-accent); }
+
+    .p-folder-icon {
+      position: absolute; right: 6%; top: 63%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: row; align-items: center; gap: .6rem;
+      font-size: 1.5rem; line-height: 1; color: var(--f-accent);
+      opacity: .9; pointer-events: none;
+      transition: transform .3s ease;
+    }
+    .p-folder:hover .p-folder-icon { transform: translateY(-50%) translateX(-3px) scale(1.06); }
+    .p-folder-open {
+      font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--p-text, #fff); opacity: .6; order: -1;
+    }
+    .p-folder-label {
+      position: absolute; left: 3.5%; top: 63%; transform: translateY(-50%);
+      padding: .25rem .7rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .85rem;
+      letter-spacing: .02em; text-transform: uppercase; white-space: nowrap;
+      background: var(--f-label-bg); border: 2px solid var(--f-line); border-radius: 9px;
+      transition: border-color .3s ease, color .3s ease;
+    }
+    .p-folder:hover .p-folder-label { border-color: var(--f-accent); color: var(--f-accent); }
+    @media (max-width: 399.98px) { .p-folder-open { display: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .p-folder, .p-folder * { transition: none !important; }
+    }
+  </style>
+
+  <script>
+    if (localStorage.getItem('portfolio-theme') === 'light')
+      document.documentElement.setAttribute('data-theme', 'light');
+  </script>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAVIGATION BAR
+  ═══════════════════════════════════════ -->
+  <nav class="p-navbar">
+      <div class="p-nav-inner">
+        <a href="about.html" class="p-nav-logo">
+          <div class="p-nav-logo-placeholder" title="Replace with logo">
+            <img src="aq.svg" alt="Logo"> 
+          </div>
+          <span class="p-nav-brand">kimyows<span>.dev</span></span>
+        </a>
+      <div class="p-nav-links">
+        <a href="index.html"        class="p-nav-link" data-page="about">About</a>
+        <a href="experience.html" class="p-nav-link" data-page="experience">Experience</a>
+        <a href="projects.html"     class="p-nav-link" data-page="projects">Projects</a>
+                <a href="contact.html"      class="p-nav-link" data-page="contact">Contact</a>
+        <button class="p-theme-toggle" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></button>
+      </div>
+      <div class="p-nav-mobile-right">
+        <button class="p-theme-toggle" id="themeToggleMobile"><i class="bi bi-sun" id="themeIconMobile"></i></button>
+        <button class="p-hamburger" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="bi bi-list"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="offcanvas offcanvas-end p-offcanvas" id="mobileMenu" tabindex="-1">
+    <div class="offcanvas-header">
+      <span class="p-nav-brand">kimyows<span style="color:var(--p-text)">.dev</span></span>
+      <button type="button" class="p-hamburger" data-bs-dismiss="offcanvas"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="offcanvas-body">
+      <nav class="p-mobile-nav">
+        <a href="index.html"        class="p-mobile-link" data-page="about"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>About</a>
+        <a href="experience.html" class="p-mobile-link" data-page="experience"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Experience</a>
+        <a href="projects.html"     class="p-mobile-link" data-page="projects"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Projects</a>
+                <a href="contact.html"      class="p-mobile-link" data-page="contact"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Contact</a>
+      </nav>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════
+       BENTO GALLERY SECTION
+       To add a picture: change the src of the <img> in a card
+  ═══════════════════════════════════════ -->
+  <section class="p-page p-section" style="padding-top: 8rem;">
+    <div class="container">
+      <h2 class="p-section-title reveal">Dreams &amp; Delights</h2>
+      <p class="p-achievements-sub reveal">A little moodboard of the places, stories and small things I love.</p>
+
+      <div class="bento reveal">
+
+        <div class="bento-card b-places">
+          <i class="bi bi-image"></i>
+          <img src="images/places.jpg" alt="Places I Want to Go" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Places I Want to Go</h3>
+            <p>New places. Same me.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-movies">
+          <i class="bi bi-image"></i>
+          <img src="images/movies.jpg" alt="Favorite Movies" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Favorite Movies</h3>
+            <p>Good stories. Better feelings.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-dream">
+          <i class="bi bi-image"></i>
+          <img src="images/dream-life.jpg" alt="Dream Life" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Dream Life</h3>
+            <p>Freedom. Beauty. Balance.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-home">
+          <i class="bi bi-image"></i>
+          <img src="images/dream-home.jpg" alt="My Dream Home" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>My Dream Home</h3>
+            <p>A safe place for big dreams.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-sound">
+          <i class="bi bi-image"></i>
+          <img src="images/soundtrack.jpg" alt="Soundtrack of My Life" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Soundtrack of My Life</h3>
+            <p>Same songs. Different days.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-joys">
+          <i class="bi bi-image"></i>
+          <img src="images/little-joys.jpg" alt="Little Joys" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Little Joys</h3>
+            <p>It's the small things.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-atomic">
+          <i class="bi bi-image"></i>
+          <img src="images/atomic-habits.jpg" alt="Atomic Habits" onerror="this.style.display='none'">
+        </div>
+
+        <div class="bento-card b-inspo">
+          <i class="bi bi-image"></i>
+          <img src="images/inspiration.jpg" alt="Inspiration" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Inspiration</h3>
+            <p>Better ideas. A brighter me.</p>
+          </div>
+        </div>
+
+        <div class="bento-card b-adv">
+          <i class="bi bi-image"></i>
+          <img src="images/adventure.jpg" alt="Adventure" onerror="this.style.display='none'">
+          <div class="bento-caption">
+            <h3>Adventure</h3>
+            <p>More of this, please.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Back to Projects folder -->
+      <div class="p-folder-wrap reveal">
+        <a href="projects.html" class="p-folder" aria-label="Back to Projects">
+          <svg viewBox="0 0 360 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path class="f-tab" d="M148 6 H330 Q342 6 342 18 V36 H172 Z"/>
+            <path class="f-body" d="M14 6 H150 Q162 6 167 16 Q172 26 188 26 H346 Q356 26 356 36 V70 Q356 80 346 80 H14 Q4 80 4 70 V16 Q4 6 14 6 Z"/>
+          </svg>
+          <span class="p-folder-icon"><i class="bi bi-arrow-left"></i><span class="p-folder-open">Go back</span></span>
+          <span class="p-folder-label">Back to Projects</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="p-footer-inner">
+        <div class="p-footer-left">
+          <div class="p-footer-logo-placeholder" title="Add school logo">
+             <img src="aq.svg" alt="AQ Logo">
+          </div>
+          <div>
+            <div class="p-footer-school-name">Polytechnic University of the Philippines</div>
+            <div class="p-footer-campus">Sto. Tomas Campus</div>
+          </div>
+        </div>
+        <div class="p-footer-right">&copy; 2026 <span>Aila Quimio</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="portfolio.js"></script>
+  <script>setActivePage('projects');</script>
+</body>
+</html>
