@@ -1,10 +1,13 @@
+
+
+Projects · HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Projects — Aila Quimio</title>
-
+ 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
@@ -12,15 +15,66 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
   <link rel="stylesheet" href="style.css">
-
+ 
+  <!-- Compact project cards: size-only overrides (loaded after style.css) -->
+  <style>
+    /* Slightly narrower grid so each card takes less width */
+    .p-page > .container { max-width: 1140px; }
+ 
+    /* Equal-height columns and cards */
+    .p-page .row > [class*="col-"] { display: flex; }
+    .p-page .p-proj-card {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+    }
+ 
+    /* Uniform, shorter image area */
+    .p-page .p-proj-img {
+      position: relative;
+      height: 170px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .p-page .p-proj-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+ 
+    /* Tighter body spacing; links pinned to the bottom for alignment */
+    .p-page .p-proj-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 1.1rem 1.15rem;
+    }
+    .p-page .p-proj-desc {
+      font-size: .85rem;
+      line-height: 1.55;
+      margin-bottom: .85rem;
+    }
+    .p-page .p-proj-tech { margin-bottom: .85rem; }
+    .p-page .p-proj-links { margin-top: auto; }
+ 
+    @media (max-width: 991.98px) {
+      .p-page .p-proj-img { height: 180px; }
+    }
+    @media (max-width: 575.98px) {
+      .p-page .p-proj-img { height: 160px; }
+      .p-page .p-proj-body { padding: 1rem; }
+    }
+  </style>
+ 
   <script>
     if (localStorage.getItem('portfolio-theme') === 'light')
       document.documentElement.setAttribute('data-theme', 'light');
   </script>
 </head>
-
+ 
 <body>
-
+ 
   <!-- ═══════════════════════════════════════
        NAVIGATION BAR
   ═══════════════════════════════════════ -->
@@ -45,7 +99,7 @@
       </div>
     </div>
   </nav>
-
+ 
   <div class="offcanvas offcanvas-end p-offcanvas" id="mobileMenu" tabindex="-1">
     <div class="offcanvas-header">
       <span class="p-nav-brand">kimyows<span style="color:var(--p-text)">.dev</span></span>
@@ -60,8 +114,8 @@
       </nav>
     </div>
   </div>
-
-
+ 
+ 
   <!-- ═══════════════════════════════════════
        PROJECTS SECTION
   ═══════════════════════════════════════ -->
@@ -72,9 +126,9 @@
       <br> each contributing to my growth in software and web development.
       </p>
       <div class="row g-4">
-
+ 
         <!-- Project 001 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/cryptfall.jpg" alt="CryptFall">
@@ -103,9 +157,9 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- Project 002 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/bloom.png" alt="Bloom POS">
@@ -135,9 +189,9 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- Project 003 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/nutriscale.jpg" alt="NutriScale">
@@ -165,9 +219,9 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- Project 004 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/figma.png" alt="figma">
@@ -193,9 +247,9 @@
             </div>
           </div>
         </div>
-
+ 
                 <!-- Project 005 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/brew.png" alt="coffee shop pos">
@@ -225,9 +279,9 @@
             </div>
           </div>
         </div>
-
+ 
         <!-- Project 006 -->
-        <div class="col-lg-6 reveal">
+        <div class="col-md-6 col-lg-4 reveal">
           <div class="p-proj-card">
             <div class="p-proj-img">
               <img src="images/sanrio.jpg" alt="sanrio">
@@ -259,8 +313,8 @@
       </div>
     </div>
   </section>
-
-
+ 
+ 
   <!-- FOOTER -->
   <footer>
     <div class="container">
@@ -278,7 +332,7 @@
       </div>
     </div>
   </footer>
-
+ 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="portfolio.js"></script>
   <script>setActivePage('projects');</script>
