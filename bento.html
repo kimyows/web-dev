@@ -107,7 +107,8 @@
     @media (min-width: 992px) {
       .bento {
         grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: 12.5rem 10.5rem 7.5rem 8.5rem;
+        /* Taller rows (+6.5rem total) so the grid's bottom edge lands where the Back link's bottom edge used to be */
+        grid-template-rows: 14.5rem 12.25rem 8.75rem 10rem;
         grid-template-areas:
           "places movies movies dream"
           "home   home   sound  dream"
@@ -123,6 +124,16 @@
       .b-atomic { grid-area: atomic; }
       .b-inspo  { grid-area: inspo; }
       .b-adv    { grid-area: adv; }
+
+      /* Back link moves up beside the title so the grid can extend down to its old bottom edge */
+      .p-page > .container { position: relative; }
+      .p-page > .container > .p-folder-wrap {
+        position: absolute;
+        top: 0;
+        right: calc(var(--bs-gutter-x, 1.5rem) * .5);
+        margin: 0;
+        width: 340px;
+      }
     }
 
     /* ── Web Development folder (clickable) ── */
@@ -250,8 +261,8 @@
   ═══════════════════════════════════════ -->
   <section class="p-page p-section" style="padding-top: 8rem;">
     <div class="container">
-      <h2 class="p-section-title reveal">Dreams &amp; Delights</h2>
-      <p class="p-achievements-sub reveal">A little moodboard of the places, stories and small things I love.</p>
+      <h2 class="p-section-title reveal">Life in Little Pieces</h2>
+      <p class="p-achievements-sub reveal">Some of my favorite things, current interests, and little parts of my life.</p>
 
       <div class="bento reveal">
 
