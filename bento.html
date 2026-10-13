@@ -103,27 +103,35 @@
       .b-movies, .b-home, .b-inspo { grid-column: span 2; }
     }
 
-    /* Desktop: the full bento arrangement */
+    /* Mobile & tablet: the Bootstrap rows/cols are layout-neutral wrappers,
+       so the grid above still positions the cards exactly as before */
+    @media (max-width: 991.98px) {
+      .bento .row,
+      .bento .row > * { display: contents; }
+      .b-adv { order: 1; }   /* keeps the original card order (Adventure last) */
+    }
+
+    /* Desktop: Bootstrap rows & columns draw the bento arrangement.
+       Row height = card height + .75rem (the gap), so card sizes and gaps are unchanged. */
     @media (min-width: 992px) {
       .bento {
-        grid-template-columns: repeat(4, 1fr);
-        /* Taller rows (+6.5rem total) so the grid's bottom edge lands where the Back link's bottom edge used to be */
-        grid-template-rows: 14.5rem 12.25rem 8.75rem 10rem;
-        grid-template-areas:
-          "places movies movies dream"
-          "home   home   sound  dream"
-          "joys   atomic sound  adv"
-          "joys   inspo  inspo  adv";
+        --h1: 15.25rem; --h2: 13rem; --h3: 9.5rem; --h4: 10.75rem;
+        display: block;
+        margin-block: -.375rem;          /* cancels the half-gap padding on the outer edges */
       }
-      .b-places { grid-area: places; }
-      .b-movies { grid-area: movies; }
-      .b-dream  { grid-area: dream; }
-      .b-home   { grid-area: home; }
-      .b-sound  { grid-area: sound; }
-      .b-joys   { grid-area: joys; }
-      .b-atomic { grid-area: atomic; }
-      .b-inspo  { grid-area: inspo; }
-      .b-adv    { grid-area: adv; }
+      .bento .row { --bs-gutter-x: .75rem; }
+      .bento .p-1 { padding: .375rem !important; }   /* .75rem gap between cards */
+      .bento .row > * { height: 100%; }
+
+      .bento-row-1 { height: var(--h1); }
+      .bento-row-2 { height: var(--h2); }
+      .bento-row-3 { height: var(--h3); }
+      .bento-row-4 { height: var(--h4); }
+
+      /* Tall cards reach down into the next row(s) */
+      .bento .row > .bento-span-12 { height: calc(var(--h1) + var(--h2)); }
+      .bento .row > .bento-span-23 { height: calc(var(--h2) + var(--h3)); }
+      .bento .row > .bento-span-34 { height: calc(var(--h3) + var(--h4)); }
 
       /* Back link moves up beside the title so the grid can extend down to its old bottom edge */
       .p-page > .container { position: relative; }
@@ -257,6 +265,7 @@
 
   <!-- ═══════════════════════════════════════
        BENTO GALLERY SECTION
+       To add a picture: change the src of the <img> in a card
   ═══════════════════════════════════════ -->
   <section class="p-page p-section" style="padding-top: 8rem;">
     <div class="container">
@@ -265,72 +274,101 @@
 
       <div class="bento reveal">
 
-        <div class="bento-card b-places">
-          <i class="bi bi-image"></i>
-          <img src="images/places.jpg" alt="Places I Want to Go" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>Current Obsession</h3>
+        <div class="row bento-row-1">
+          <div class="col-3 p-1">
+            <div class="card bento-card b-places h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/places.jpg" alt="Places I Want to Go" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Places I Want to Go</h3>
+                <p>New places. Same me.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 p-1">
+            <div class="card bento-card b-movies h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/movies.jpg" alt="Favorite Movies" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Favorite Movies</h3>
+                <p>Good stories. Better feelings.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 p-1 bento-span-12">
+            <div class="card bento-card b-dream h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/dream-life.jpg" alt="Dream Life" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Dream Life</h3>
+                <p>Freedom. Beauty. Balance.</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="bento-card b-movies">
-          <i class="bi bi-image"></i>
-          <img src="images/movies.jpg" alt="Favorite Movies" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>Comfort Movies</h3>
+        <div class="row bento-row-2">
+          <div class="col-6 p-1">
+            <div class="card bento-card b-home h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/dream-home.jpg" alt="My Dream Home" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>My Dream Home</h3>
+                <p>A safe place for big dreams.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 p-1 bento-span-23">
+            <div class="card bento-card b-sound h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/soundtrack.jpg" alt="Soundtrack of My Life" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Soundtrack of My Life</h3>
+                <p>Same songs. Different days.</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="bento-card b-dream">
-          <i class="bi bi-image"></i>
-          <img src="images/dream-life.jpg" alt="Dream Life" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>A place on My List</h3>
+        <div class="row bento-row-3">
+          <div class="col-3 p-1 bento-span-34">
+            <div class="card bento-card b-joys h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/little-joys.jpg" alt="Little Joys" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Little Joys</h3>
+                <p>It's the small things.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 p-1">
+            <div class="card bento-card b-atomic h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/atomic-habits.jpg" alt="Atomic Habits" onerror="this.style.display='none'">
+            </div>
+          </div>
+          <div class="col-3 offset-3 p-1 bento-span-34">
+            <div class="card bento-card b-adv h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/adventure.jpg" alt="Adventure" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Adventure</h3>
+                <p>More of this, please.</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="bento-card b-home">
-          <i class="bi bi-image"></i>
-          <img src="images/dream-home.jpg" alt="My Dream Home" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>Favorite Season</h3>
-          </div>
-        </div>
-
-        <div class="bento-card b-sound">
-          <i class="bi bi-image"></i>
-          <img src="images/soundtrack.jpg" alt="Soundtrack of My Life" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>Soundtrack of My Life</h3>
-          </div>
-        </div>
-
-        <div class="bento-card b-joys">
-          <i class="bi bi-image"></i>
-          <img src="images/little-joys.jpg" alt="Little Joys" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>My Kind of Peace</h3>
-          </div>
-        </div>
-
-        <div class="bento-card b-atomic">
-          <i class="bi bi-image"></i>
-          <img src="images/atomic-habits.jpg" alt="Atomic Habits" onerror="this.style.display='none'">
-        </div>
-
-        <div class="bento-card b-inspo">
-          <i class="bi bi-image"></i>
-          <img src="images/inspiration.jpg" alt="Inspiration" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>Lines I Live By</h3>
-          </div>
-        </div>
-
-        <div class="bento-card b-adv">
-          <i class="bi bi-image"></i>
-          <img src="images/adventure.jpg" alt="Adventure" onerror="this.style.display='none'">
-          <div class="bento-caption">
-            <h3>IT Life</h3>
+        <div class="row bento-row-4">
+          <div class="col-6 offset-3 p-1">
+            <div class="card bento-card b-inspo h-100">
+              <i class="bi bi-image"></i>
+              <img src="images/inspiration.jpg" alt="Inspiration" onerror="this.style.display='none'">
+              <div class="bento-caption">
+                <h3>Inspiration</h3>
+                <p>Better ideas. A brighter me.</p>
+              </div>
+            </div>
           </div>
         </div>
 
