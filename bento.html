@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bento Gallery — Aila Quimio</title>
+  <link rel="icon" href="images/favicon.ico">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -117,10 +118,10 @@
       .bento {
         --h1: 15.25rem; --h2: 13rem; --h3: 9.5rem; --h4: 10.75rem;
         display: block;
-        margin-block: -.375rem;          /* cancels the half-gap padding on the outer edges */
+        margin-block: -.375rem;         
       }
       .bento .row { --bs-gutter-x: .75rem; }
-      .bento .p-1 { padding: .375rem !important; }   /* .75rem gap between cards */
+      .bento .p-1 { padding: .375rem !important; }   
       .bento .row > * { height: 100%; }
 
       .bento-row-1 { height: var(--h1); }
@@ -133,7 +134,7 @@
       .bento .row > .bento-span-23 { height: calc(var(--h2) + var(--h3)); }
       .bento .row > .bento-span-34 { height: calc(var(--h3) + var(--h4)); }
 
-      /* Back link moves up beside the title so the grid can extend down to its old bottom edge */
+    
       .p-page > .container { position: relative; }
       .p-page > .container > .p-folder-wrap {
         position: absolute;
