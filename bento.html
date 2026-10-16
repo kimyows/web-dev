@@ -103,17 +103,21 @@
       .bento-card { grid-area: auto; }
       .b-movies, .b-home, .b-inspo { grid-column: span 2; }
     }
-
-    /* Mobile & tablet: the Bootstrap rows/cols are layout-neutral wrappers,
-       so the grid above still positions the cards exactly as before */
     @media (max-width: 991.98px) {
       .bento .row,
-      .bento .row > * { display: contents; }
-      .b-adv { order: 1; }   /* keeps the original card order (Adventure last) */
+      .bento .row > * {
+        display: contents;
+      }
+
+      .bento-card {
+        grid-area: auto;
+      }
+
+      .b-adv {
+        order: 1;
+      }
     }
 
-    /* Desktop: Bootstrap rows & columns draw the bento arrangement.
-       Row height = card height + .75rem (the gap), so card sizes and gaps are unchanged. */
     @media (min-width: 992px) {
       .bento {
         --h1: 15.25rem; --h2: 13rem; --h3: 9.5rem; --h4: 10.75rem;
