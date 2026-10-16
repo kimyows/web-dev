@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    /* ── Bento grid (desktop layout is drawn in grid-template-areas) ── */
     .bento {
       display: grid;
       grid-template-columns: 1fr;
@@ -37,7 +36,6 @@
       box-shadow: 0 12px 26px rgba(0, 0, 0, .35);
     }
 
-    /* Placeholder icon (shows until you add an image) */
     .bento-card > i {
       position: absolute;
       top: 50%; left: 50%;
@@ -58,7 +56,6 @@
     }
     .bento-card:hover img { transform: scale(1.05); }
 
-    /* Caption sits on a dark fade so it stays readable in both themes */
     .bento-caption {
       position: absolute;
       left: 0; right: 0; bottom: 0;
@@ -82,7 +79,6 @@
       opacity: .85;
     }
 
-    /* Each card gets its own grid area name */
     .b-places { grid-area: places; }
     .b-movies { grid-area: movies; }
     .b-dream  { grid-area: dream; }
@@ -116,6 +112,47 @@
       .b-adv {
         order: 1;
       }
+
+      .bento.reveal {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+      }
+      .bento .bento-card {
+        display: block;
+        width: 100%;
+        height: 100% !important;
+        min-height: 12rem;
+      }
+    }
+
+    @media (max-width: 991.98px) {
+      .bento {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-template-rows: none !important;
+        grid-auto-rows: 9.5rem !important;
+        grid-auto-flow: row !important;
+        gap: .75rem !important;
+      }
+      .bento .row,
+      .bento .row > * { display: contents !important; }
+
+      .bento .bento-card { min-height: 0 !important; margin: 0 !important; }
+      .bento .b-adv { order: 0 !important; }
+
+      .bento .b-movies { grid-column: 1 / 3 !important; grid-row: 1 !important; }      /* wide  */
+      .bento .b-dream  { grid-column: 1 !important;     grid-row: 2 / 4 !important; }  /* tall  */
+      .bento .b-places { grid-column: 2 !important;     grid-row: 2 !important; }      /* small */
+      .bento .b-sound  { grid-column: 2 !important;     grid-row: 3 !important; }      /* small */
+      .bento .b-home   { grid-column: 1 / 3 !important; grid-row: 4 !important; }      /* wide  */
+      .bento .b-joys   { grid-column: 1 !important;     grid-row: 5 / 7 !important; }  /* tall  */
+      .bento .b-atomic { grid-column: 2 !important;     grid-row: 5 !important; }      /* small */
+      .bento .b-adv    { grid-column: 2 !important;     grid-row: 6 !important; }      /* small */
+      .bento .b-inspo  { grid-column: 1 / 3 !important; grid-row: 7 !important; }      /* wide  */
+    }
+    @media (min-width: 576px) and (max-width: 991.98px) {
+      .bento { grid-auto-rows: 11rem !important; }
     }
 
     @media (min-width: 992px) {
@@ -133,7 +170,6 @@
       .bento-row-3 { height: var(--h3); }
       .bento-row-4 { height: var(--h4); }
 
-      /* Tall cards reach down into the next row(s) */
       .bento .row > .bento-span-12 { height: calc(var(--h1) + var(--h2)); }
       .bento .row > .bento-span-23 { height: calc(var(--h2) + var(--h3)); }
       .bento .row > .bento-span-34 { height: calc(var(--h3) + var(--h4)); }
