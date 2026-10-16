@@ -253,6 +253,13 @@
     @media (prefers-reduced-motion: reduce) {
       .p-folder, .p-folder * { transition: none !important; }
     }
+
+    /* Fallback: if portfolio.js is missing, keep .reveal content visible */
+    .reveal-fallback .reveal {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: none !important;
+    }
   </style>
 
   <script>
@@ -443,7 +450,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="portfolio.js"></script>
-  <script>setActivePage('projects');</script>
+  <script src="portfolio.js" onerror="document.documentElement.classList.add('reveal-fallback')"></script>
+  <script>if (typeof setActivePage === 'function') setActivePage('projects');</script>
 </body>
 </html>
