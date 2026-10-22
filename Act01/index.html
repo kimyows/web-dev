@@ -42,7 +42,6 @@
       border-color: color-mix(in srgb, var(--p-accent, #8b9cff) 55%, transparent);
       box-shadow: 0 18px 34px -10px rgba(0, 0, 0, .5);
     }
-    /* Live preview: the real bento.html shown in a 1280px-wide frame, scaled to fit */
     .hub-thumb {
       position: relative; overflow: hidden; border-radius: 1rem;
       border: 1px solid color-mix(in srgb, var(--p-text) 14%, transparent);
@@ -52,11 +51,9 @@
       position: absolute; top: 0; left: 0;
       border: 0; transform-origin: 0 0; pointer-events: none;
     }
-    /* Whole card is clickable */
     .hub-thumb-link { position: absolute; inset: 0; z-index: 3; border-radius: 1.25rem; }
     .hub-thumb-link:focus-visible { outline: 2px solid var(--p-accent, #8b9cff); outline-offset: -2px; }
 
-    /* Hover overlay: "View Project" with eye */
     .hub-thumb::after {
       content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
       background: color-mix(in srgb, #000 62%, var(--p-accent, #8b9cff));
@@ -300,7 +297,7 @@
       frames.forEach(function (f) {
         fit(f);
         f.addEventListener('load', function () {
-          try {   // crop the preview right below the gallery
+          try {   
             var b = f.contentDocument.querySelector('.bento');
             if (b) f.dataset.h = Math.ceil(b.getBoundingClientRect().bottom + f.contentWindow.scrollY + 24);
           } catch (e) {}
