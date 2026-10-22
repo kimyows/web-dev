@@ -23,14 +23,22 @@
     }
     .hub-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 400px));
-      justify-content: start;
+      grid-template-columns: minmax(0, 1fr);
+      max-width: 440px;
       gap: 1.25rem;
-      margin-top: 1.25rem;
+      margin: 1.25rem auto 0;
+    }
+    @media (min-width: 768px) {
+      .hub-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; }
+      .hub-card:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - .625rem); }
+    }
+    @media (min-width: 992px) {
+      .hub-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hub-card:last-child:nth-child(odd) { grid-column: auto; justify-self: stretch; width: auto; }
     }
     .hub-card {
       position: relative;
-      display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; align-items: center;
+      display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; align-items: center; align-content: start;
       padding: 1rem; border-radius: 1.25rem;
       background: color-mix(in srgb, var(--p-text) 6%, transparent);
       border: 1px solid color-mix(in srgb, var(--p-text) 14%, transparent);
@@ -81,9 +89,23 @@
       letter-spacing: .16em; text-transform: uppercase;
       color: var(--p-accent, #8b9cff);
     }
-    .hub-activity::before {
-    content: none;
+
+    .hub-card-soon:hover {
+      transform: none;
+      border-color: color-mix(in srgb, var(--p-text) 14%, transparent);
+      box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .35);
     }
+    .hub-thumb-soon {
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .6rem;
+      min-height: 10rem;
+      color: var(--p-text, #fff);
+    }
+    .hub-thumb-soon i { font-size: 2rem; line-height: 1; color: var(--p-accent, #8b9cff); opacity: .85; }
+    .hub-thumb-soon span {
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .8rem;
+      letter-spacing: .12em; text-transform: uppercase; opacity: .75;
+    }
+
     .hub-card-body { padding: 0 .5rem; }
     .hub-card h3 {
       margin: .45rem 0 .5rem;
@@ -161,7 +183,6 @@
       .hub-card, .hub-thumb::after, .hub-view, .p-folder, .p-folder * { transition: none !important; }
       .hub-card:hover { transform: none; }
     }
-
     .reveal-fallback .reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; }
   </style>
 
@@ -173,9 +194,9 @@
 
 <body>
 
-  <!-- ════════════════════
-       NAVIGATION BAR 
-  ═════════════════════════ -->
+  <!-- ═══════════════════════════════════════
+       NAVIGATION BAR (same as before)
+  ═══════════════════════════════════════ -->
   <nav class="p-navbar">
     <div class="p-nav-inner">
       <a href="https://kimyows.github.io/index.html" class="p-nav-logo">
@@ -213,6 +234,7 @@
     </div>
   </div>
 
+
   <!-- ═══════════════════════════════════════
        WEB DEVELOPMENT PROJECT HUB
   ═══════════════════════════════════════ -->
@@ -232,10 +254,36 @@
           </div>
           <div class="hub-card-body">
             <span class="hub-activity">Activity 01</span>
-            <h3>Bento Gallery</h3>
-            <p>A collection of images displayed in a modern bento-style layout.</p>
+            <h3>Bento Box</h3>
+            <p>A minimalist photo gallery organized into a modular bento box grid layout.</p>
           </div>
           <a class="hub-thumb-link" href="bento.html" aria-label="View Bento Box project"></a>
+        </article>
+
+        <!-- ── Activity 02: Coming Soon ── -->
+        <article class="hub-card hub-card-soon">
+          <div class="hub-thumb hub-thumb-soon">
+            <i class="bi bi-hourglass-split"></i>
+            <span>Coming Soon</span>
+          </div>
+          <div class="hub-card-body">
+            <span class="hub-activity">Activity 02</span>
+            <h3>Coming Soon</h3>
+            <p>Another project from Web Development is on its way. Check back soon.</p>
+          </div>
+        </article>
+
+        <!-- ── Activity 03: Coming Soon ── -->
+        <article class="hub-card hub-card-soon">
+          <div class="hub-thumb hub-thumb-soon">
+            <i class="bi bi-hourglass-split"></i>
+            <span>Coming Soon</span>
+          </div>
+          <div class="hub-card-body">
+            <span class="hub-activity">Activity 03</span>
+            <h3>Coming Soon</h3>
+            <p>Another project from Web Development coursework is on its way. Check back soon.</p>
+          </div>
         </article>
       </div>
 
@@ -275,7 +323,7 @@
 
   <script>
     (function () {
-      var W = 1280, DEFAULT_H = 1100;        
+      var W = 1280, DEFAULT_H = 1100;       
       var frames = document.querySelectorAll('.hub-preview');
 
       function fit(f) {
@@ -285,19 +333,20 @@
         f.style.height = h + 'px';
         f.style.transform = 'scale(' + s + ')';
         box.style.height = Math.round(h * s) + 'px';
+        document.querySelectorAll('.hub-thumb-soon').forEach(function (t) { t.style.height = box.style.height; });
       }
       function syncTheme(f) {
         try {
           var t = document.documentElement.getAttribute('data-theme');
           var r = f.contentDocument.documentElement;
           if (t) r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
-        } catch (e) {}
+        } catch (e) { }
       }
 
       frames.forEach(function (f) {
         fit(f);
         f.addEventListener('load', function () {
-          try {   
+          try { 
             var b = f.contentDocument.querySelector('.bento');
             if (b) f.dataset.h = Math.ceil(b.getBoundingClientRect().bottom + f.contentWindow.scrollY + 24);
           } catch (e) {}
