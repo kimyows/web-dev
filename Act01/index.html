@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Development — Aila Quimio</title>
+  <link rel="icon" href="images/favicon.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .p-page.hub-page {
+      min-height: 0 !important;
+      padding-top: 6.25rem !important;      
+      padding-bottom: 1.5rem !important;
+      --hub-reserve: 510px;
+    }
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 400px));
+      justify-content: start;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+    .hub-card {
+      position: relative;
+      display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; align-items: center;
+      padding: 1rem; border-radius: 1.25rem;
+      background: color-mix(in srgb, var(--p-text) 6%, transparent);
+      border: 1px solid color-mix(in srgb, var(--p-text) 14%, transparent);
+      box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .35);
+      transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+    }
+    .hub-card:hover {
+      transform: translateY(-4px);
+      border-color: color-mix(in srgb, var(--p-accent, #8b9cff) 55%, transparent);
+      box-shadow: 0 18px 34px -10px rgba(0, 0, 0, .5);
+    }
+    /* Live preview: the real bento.html shown in a 1280px-wide frame, scaled to fit */
+    .hub-thumb {
+      position: relative; overflow: hidden; border-radius: 1rem;
+      border: 1px solid color-mix(in srgb, var(--p-text) 14%, transparent);
+      background: color-mix(in srgb, var(--p-text) 8%, transparent);
+    }
+    .hub-preview {
+      position: absolute; top: 0; left: 0;
+      border: 0; transform-origin: 0 0; pointer-events: none;
+    }
+    /* Whole card is clickable */
+    .hub-thumb-link { position: absolute; inset: 0; z-index: 3; border-radius: 1.25rem; }
+    .hub-thumb-link:focus-visible { outline: 2px solid var(--p-accent, #8b9cff); outline-offset: -2px; }
+
+    /* Hover overlay: "View Project" with eye */
+    .hub-thumb::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background: color-mix(in srgb, #000 62%, var(--p-accent, #8b9cff));
+      opacity: 0; transition: opacity .3s ease;
+    }
+    .hub-view {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .5rem;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .8rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      opacity: 0; transform: translateY(6px);
+      transition: opacity .3s ease, transform .3s ease;
+    }
+    .hub-view i { font-size: 2rem; line-height: 1; }
+    .hub-card:hover .hub-thumb::after,
+    .hub-card:has(.hub-thumb-link:focus-visible) .hub-thumb::after { opacity: .8; }
+    .hub-card:hover .hub-view,
+    .hub-card:has(.hub-thumb-link:focus-visible) .hub-view { opacity: 1; transform: none; }
+
+    .hub-activity {
+      display: inline-flex; align-items: center; gap: .6rem;
+      margin: 0;
+      font-family: 'Space Mono', monospace; font-size: .7rem; font-weight: 700;
+      letter-spacing: .16em; text-transform: uppercase;
+      color: var(--p-accent, #8b9cff);
+    }
+    .hub-activity::before {
+    content: none;
+    }
+    .hub-card-body { padding: 0 .5rem; }
+    .hub-card h3 {
+      margin: .45rem 0 .5rem;
+      font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.5rem; line-height: 1.2;
+      color: var(--p-text, #fff);
+    }
+    .hub-card p { margin: 0 0 1.25rem; font-size: .95rem; line-height: 1.8; opacity: .75; }
+
+    .p-folder-wrap { display: flex; justify-content: flex-end; margin: 1rem 0 0; z-index: 10; }
+    .p-folder {
+      --f-body: #1b1b22;
+      --f-tab: #2c2c36;
+      --f-line: rgba(255,255,255,.75);
+      --f-label-bg: #14141a;
+      --f-shadow: rgba(0,0,0,.45);
+      --f-accent: var(--p-accent, #8b9cff);
+      position: relative;
+      display: block;
+      width: min(340px, 100%);
+      aspect-ratio: 360 / 84;
+      color: var(--p-text, #fff);
+      text-decoration: none;
+      transition: transform .3s ease;
+    }
+    :root[data-theme="light"] .p-folder {
+      --f-body: #f1f1f3;
+      --f-tab: #cfd0d4;
+      --f-line: #15151a;
+      --f-label-bg: #ffffff;
+      --f-shadow: rgba(0,0,0,.18);
+    }
+    .p-folder:hover, .p-folder:focus-visible { transform: translateY(-4px); color: var(--p-text, #fff); }
+    .p-folder:focus-visible { outline: 2px solid var(--f-accent); outline-offset: 6px; border-radius: 16px; }
+    .p-folder svg {
+      width: 100%; height: 100%; display: block; overflow: visible;
+      filter: drop-shadow(0 6px 12px var(--f-shadow));
+      transition: filter .3s ease;
+    }
+    .p-folder:hover svg { filter: drop-shadow(0 10px 18px var(--f-shadow)); }
+    .p-folder .f-tab, .p-folder .f-body {
+      stroke: var(--f-line); stroke-width: 2.5; stroke-linejoin: round;
+      transition: fill .3s ease, stroke .3s ease, transform .3s ease;
+    }
+    .p-folder .f-tab { fill: var(--f-tab); }
+    .p-folder .f-body { fill: var(--f-body); }
+    .p-folder:hover .f-tab { transform: translateY(-3px); }
+    .p-folder:hover .f-body, .p-folder:focus-visible .f-body { stroke: var(--f-accent); }
+    .p-folder:hover .f-tab, .p-folder:focus-visible .f-tab { stroke: var(--f-accent); }
+
+    .p-folder-icon {
+      position: absolute; right: 6%; top: 63%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: row; align-items: center; gap: .6rem;
+      font-size: 1.5rem; line-height: 1; color: var(--f-accent);
+      opacity: .9; pointer-events: none;
+      transition: transform .3s ease;
+    }
+    .p-folder:hover .p-folder-icon { transform: translateY(-50%) translateX(-3px) scale(1.06); }
+    .p-folder-open {
+      font-family: 'Space Mono', monospace; font-size: .6rem; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--p-text, #fff); opacity: .6; order: -1;
+    }
+    .p-folder-label {
+      position: absolute; left: 3.5%; top: 63%; transform: translateY(-50%);
+      padding: .25rem .7rem;
+      font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .85rem;
+      letter-spacing: .02em; text-transform: uppercase; white-space: nowrap;
+      background: var(--f-label-bg); border: 2px solid var(--f-line); border-radius: 9px;
+      transition: border-color .3s ease, color .3s ease;
+    }
+    .p-folder:hover .p-folder-label { border-color: var(--f-accent); color: var(--f-accent); }
+    @media (max-width: 399.98px) { .p-folder-open { display: none; } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hub-card, .hub-thumb::after, .hub-view, .p-folder, .p-folder * { transition: none !important; }
+      .hub-card:hover { transform: none; }
+    }
+
+    .reveal-fallback .reveal { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+  </style>
+
+  <script>
+    if (localStorage.getItem('portfolio-theme') === 'light')
+      document.documentElement.setAttribute('data-theme', 'light');
+  </script>
+</head>
+
+<body>
+
+  <!-- ════════════════════
+       NAVIGATION BAR 
+  ═════════════════════════ -->
+  <nav class="p-navbar">
+    <div class="p-nav-inner">
+      <a href="https://kimyows.github.io/index.html" class="p-nav-logo">
+        <div class="p-nav-logo-placeholder" title="Replace with logo">
+          <img src="aq.svg" alt="Logo">
+        </div>
+        <span class="p-nav-brand">kimyows<span>.dev</span></span>
+      </a>
+      <div class="p-nav-links">
+        <a href="https://kimyows.github.io/index.html"      class="p-nav-link" data-page="about">About</a>
+        <a href="https://kimyows.github.io/experience.html" class="p-nav-link" data-page="experience">Experience</a>
+        <a href="https://kimyows.github.io/projects.html"   class="p-nav-link" data-page="projects">Projects</a>
+        <a href="https://kimyows.github.io/contact.html"    class="p-nav-link" data-page="contact">Contact</a>
+        <button class="p-theme-toggle" id="themeToggle"><i class="bi bi-sun" id="themeIcon"></i></button>
+      </div>
+      <div class="p-nav-mobile-right">
+        <button class="p-theme-toggle" id="themeToggleMobile"><i class="bi bi-sun" id="themeIconMobile"></i></button>
+        <button class="p-hamburger" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu"><i class="bi bi-list"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="offcanvas offcanvas-end p-offcanvas" id="mobileMenu" tabindex="-1">
+    <div class="offcanvas-header">
+      <span class="p-nav-brand">kimyows<span style="color:var(--p-text)">.dev</span></span>
+      <button type="button" class="p-hamburger" data-bs-dismiss="offcanvas"><i class="bi bi-x-lg"></i></button>
+    </div>
+    <div class="offcanvas-body">
+      <nav class="p-mobile-nav">
+        <a href="https://kimyows.github.io/index.html"      class="p-mobile-link" data-page="about"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>About</a>
+        <a href="https://kimyows.github.io/experience.html" class="p-mobile-link" data-page="experience"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Experience</a>
+        <a href="https://kimyows.github.io/projects.html"   class="p-mobile-link" data-page="projects"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Projects</a>
+        <a href="https://kimyows.github.io/contact.html"    class="p-mobile-link" data-page="contact"><i class="bi bi-chevron-right me-2" style="font-size:.65rem;opacity:.5;"></i>Contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       WEB DEVELOPMENT PROJECT HUB
+  ═══════════════════════════════════════ -->
+  <section class="p-page p-section hub-page">
+    <div class="container">
+
+      <h2 class="p-section-title reveal">Web Development</h2>
+      <p class="p-achievements-sub reveal">A collection of my work and projects from Web Development.</p>
+
+      <div class="hub-grid reveal">
+
+        <!-- ── Activity 01: Bento Box ── -->
+        <article class="hub-card">
+          <div class="hub-thumb">
+            <iframe class="hub-preview" src="bento.html" title="Bento Box live preview" loading="eager" tabindex="-1" scrolling="no"></iframe>
+            <span class="hub-view" aria-hidden="true"><i class="bi bi-eye"></i><span>View Project</span></span>
+          </div>
+          <div class="hub-card-body">
+            <span class="hub-activity">Activity 01</span>
+            <h3>Bento Gallery</h3>
+            <p>A collection of images displayed in a modern bento-style layout.</p>
+          </div>
+          <a class="hub-thumb-link" href="bento.html" aria-label="View Bento Box project"></a>
+        </article>
+      </div>
+
+      <div class="p-folder-wrap reveal">
+        <a href="https://kimyows.github.io/projects.html" class="p-folder" aria-label="Back to Projects">
+          <svg viewBox="0 0 360 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path class="f-tab" d="M148 6 H330 Q342 6 342 18 V36 H172 Z"/>
+            <path class="f-body" d="M14 6 H150 Q162 6 167 16 Q172 26 188 26 H346 Q356 26 356 36 V70 Q356 80 346 80 H14 Q4 80 4 70 V16 Q4 6 14 6 Z"/>
+          </svg>
+          <span class="p-folder-icon"><i class="bi bi-arrow-left"></i><span class="p-folder-open">Go back</span></span>
+          <span class="p-folder-label">Back to Projects</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="p-footer-inner">
+        <div class="p-footer-left">
+          <div class="p-footer-logo-placeholder" title="Add school logo">
+            <img src="aq.svg" alt="AQ Logo">
+          </div>
+          <div>
+            <div class="p-footer-school-name">Polytechnic University of the Philippines</div>
+            <div class="p-footer-campus">Sto. Tomas Campus</div>
+          </div>
+        </div>
+        <div class="p-footer-right">&copy; 2026 <span>Aila Quimio</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="portfolio.js" onerror="document.documentElement.classList.add('reveal-fallback')"></script>
+  <script>if (typeof setActivePage === 'function') setActivePage('projects');</script>
+
+  <script>
+    (function () {
+      var W = 1280, DEFAULT_H = 1100;        
+      var frames = document.querySelectorAll('.hub-preview');
+
+      function fit(f) {
+        var box = f.parentElement, h = +f.dataset.h || DEFAULT_H;
+        var s = box.clientWidth / W;
+        f.style.width = W + 'px';
+        f.style.height = h + 'px';
+        f.style.transform = 'scale(' + s + ')';
+        box.style.height = Math.round(h * s) + 'px';
+      }
+      function syncTheme(f) {
+        try {
+          var t = document.documentElement.getAttribute('data-theme');
+          var r = f.contentDocument.documentElement;
+          if (t) r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+        } catch (e) {}
+      }
+
+      frames.forEach(function (f) {
+        fit(f);
+        f.addEventListener('load', function () {
+          try {   // crop the preview right below the gallery
+            var b = f.contentDocument.querySelector('.bento');
+            if (b) f.dataset.h = Math.ceil(b.getBoundingClientRect().bottom + f.contentWindow.scrollY + 24);
+          } catch (e) {}
+          fit(f); syncTheme(f);
+        });
+      });
+      window.addEventListener('resize', function () { frames.forEach(fit); });
+      new MutationObserver(function () { frames.forEach(syncTheme); })
+        .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    })();
+  </script>
+</body>
+</html>
