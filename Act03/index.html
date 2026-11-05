@@ -70,11 +70,34 @@
     .feat .cap { position: absolute; inset: auto 0 0; padding: 3rem 1rem .8rem; background: linear-gradient(transparent, rgba(15, 25, 35, .95)); }
     .feat .snd { position: absolute; top: .6rem; right: 1.6rem; width: 2.2rem; height: 2.2rem; border: 1px solid var(--line); background: rgba(15, 25, 35, .75); color: var(--ink); border-radius: 2px; }
     .feat .snd:hover { border-color: var(--red); }
-    .tile { width: 92px; padding: .7rem .4rem; text-align: center; background: var(--panel2); border: 1px solid var(--line); clip-path: var(--cut); cursor: pointer; transition: border-color .15s; }
-    .tile:hover { border-color: var(--red); }
-    .tile img { width: 44px; height: 44px; }
-    .tile span { display: block; font-size: .72rem; line-height: 1.1; margin-top: .35rem; }
-    .tile small { color: var(--mute); font-size: .65rem; }
+    .modal-dialog:has(.agent) { --bs-modal-width: 640px; }
+    .modal-content:has(.agent) { background: none; border: 0; }
+    .modal-content:has(.agent) .modal-header { position: absolute; top: .5rem; right: .5rem; z-index: 3; padding: 0; border: 0; }
+    .modal-content:has(.agent) .modal-title { display: none; }
+    .modal-content:has(.agent) .btn-close { padding: .6rem; background-color: rgba(0, 0, 0, .45); border-radius: 2px; }
+    .modal-body:has(.agent) { padding: 0; }
+    .dossier { --pn: color-mix(in srgb, var(--c0) 70%, #000); --chamfer: polygon(2.2cqw 0, calc(100% - 2.2cqw) 0, 100% 2.2cqw, 100% calc(100% - 2.2cqw), calc(100% - 2.2cqw) 100%, 2.2cqw 100%, 0 calc(100% - 2.2cqw), 0 2.2cqw);
+      position: relative; container-type: inline-size; aspect-ratio: 736 / 1041; overflow: hidden; background: linear-gradient(rgba(0, 0, 0, .6), rgba(0, 0, 0, .6)), var(--g); }
+    .d-bg, .d-art { position: absolute; bottom: 0; pointer-events: none; }
+    .d-bg { right: -10cqw; width: 120cqw; opacity: .25; }
+    .d-art { right: -35cqw; width: 125cqw; z-index: 2; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .5)); }
+    .d-in { position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; gap: 2.4cqw; padding: 3cqw; color: #fff; text-shadow: 0 .2cqw .8cqw rgba(0, 0, 0, .35); }
+    .d-panel { padding: 3cqw; clip-path: var(--chamfer); background: linear-gradient(135deg, rgba(255, 255, 255, .16), transparent 60%), var(--pn); box-shadow: inset 0 0 0 .3cqw rgba(255, 255, 255, .28); }
+    .d-quote { margin: 0 8cqw 0 6cqw; padding: 1.4cqw 3cqw; text-align: center; font-size: max(2.4cqw, 10px); line-height: 1.3; }
+    .d-name { width: 66%; }
+    .d-name h2 { margin: 0 0 2cqw; font: 700 13.5cqw / .9 'Barlow Condensed', sans-serif; text-transform: uppercase; white-space: nowrap; }
+    .d-name p { max-width: 48cqw; margin: 0; font-size: max(2.7cqw, 11px); line-height: 1.35; }
+    .d-abil { display: flex; gap: 2.4cqw; width: 54%; }
+    .d-vert { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 2.2cqw; letter-spacing: .12em; text-transform: uppercase; opacity: .85; }
+    .d-ab { display: flex; align-items: center; gap: 2.4cqw; padding: .8cqw 0; cursor: pointer; font: 700 4.2cqw / 1.1 'Barlow Condensed', sans-serif; text-transform: uppercase; transition: transform .15s; }
+    .d-ab:hover, .d-ab:focus-visible { transform: translateX(.8cqw); outline: 0; }
+    .d-ab img { width: 5.6cqw; height: 5.6cqw; }
+    .d-thumb { position: relative; width: 40cqw; margin: 3cqw 0 0 12cqw; aspect-ratio: 452 / 128; background: var(--pn); border: .3cqw solid rgba(255, 255, 255, .55); }
+    .d-thumb::before { content: ""; position: absolute; top: -3.2cqw; left: -12cqw; width: 60cqw; height: 1.6cqw; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .45) 0 .6cqw, transparent .6cqw 1.2cqw); }
+    .d-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .d-role { display: flex; align-items: center; gap: 1.6cqw; margin-top: auto; font: 700 4.4cqw / 1 'Barlow Condensed', sans-serif; text-transform: uppercase; }
+    .d-role img { width: 6cqw; height: 6cqw; }
+    .agent-extra { padding: 1rem; background: var(--panel); border-top: 3px solid var(--c1); }
     .thumb { background: var(--panel2); border-radius: 2px; }
     .chip { background: var(--panel2); border: 1px solid var(--line); color: var(--ink); font-weight: 600; }
     .modal-content { background: radial-gradient(500px 250px at 100% 0, rgba(255, 70, 86, .12), transparent), var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--red); border-radius: 0; }
@@ -117,7 +140,7 @@
     const SPINNER = '<div class="text-center my-5"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Loading...</span></div></div>';
 
     const cols = () => innerWidth >= 1200 ? 4 : innerWidth >= 768 ? 3 : 2;
-    var D, TH = {}, CT = {}, q = '', filter = 'All', pg = {}, limit = 48, timer;
+    var D, TH = {}, CT = {}, PC = [], q = '', filter = 'All', pg = {}, limit = 48, timer;
     var elApp = document.getElementById("app");
     var elNav = document.getElementById("nav");
     var elSearch = document.getElementById("searchInput");
@@ -153,6 +176,7 @@
       }).sort((a, b) => a.displayName.localeCompare(b.displayName));
     };
     const tier = s => CT[s.contentTierUuid];
+    const wide = a => PC.find(c => c.displayName.toLowerCase().split(/[^a-z0-9/]+/).includes(a.displayName.toLowerCase()))?.wideArt;
     const rand = a => a[Math.floor(Math.random() * a.length)];
     const im = (u, c = 'img-fluid', s = '') => u ? `<img class="${c}" style="${s}" src="${u}">` : '';
     const kv = (k, v) => v == null ? '' : `<div><b>${k}:</b> ${v}</div>`;
@@ -165,20 +189,32 @@
     const T = {
       agents: {
         title: 'Agents', layout: 'tall', bg: grad, img: a => a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
-        detail: a => `
-          <div class="row g-4">
-            <div class="col-md-7">
-              ${badge(a.role?.displayName, null, a.role?.displayIcon)}${(a.characterTags || []).map(t => badge(t)).join('')}
-              <p class="mt-3 text-muted">${a.description}</p>
-              ${mediaSec('Voice lines', (a.voiceLine?.mediaList || []).map(m => media(m.wave)).join(''))}
-              <h6 class="mt-4">Abilities</h6>
-              <div class="d-flex flex-wrap gap-2">${(a.abilities || []).map(b => `
-                <div class="tile" role="button" title="${b.displayName}" onclick="show('abilities', '${a.uuid + b.slot}')">
-                  <img src="${b.displayIcon || a.displayIcon}"><span>${b.displayName}</span><small>${slot(b.slot)}</small>
-                </div>`).join('')}</div>
+        detail: a => {
+          const ac = i => hex(a.backgroundGradientColors?.[i] ?? a.backgroundGradientColors?.[0]);
+          return `
+          <div class="agent" style="--g: ${grad(a)}; --c0: ${ac(0)}; --c1: ${ac(1)}">
+            <div class="dossier">
+              ${im(a.background, 'd-bg')}${im(a.fullPortrait || a.displayIcon, 'd-art')}
+              <div class="d-in">
+                <div class="d-panel d-quote">${a.role?.description || ''}</div>
+                <div class="d-panel d-name"><h2>${a.displayName}</h2><p>${a.description}</p></div>
+                <div class="d-panel d-abil">
+                  <span class="d-vert">Special abilities</span>
+                  <div>${(a.abilities || []).map(b => `
+                    <div class="d-ab" role="button" tabindex="0" title="${slot(b.slot)}" onclick="show('abilities', '${a.uuid + b.slot}')" onkeydown="event.key == 'Enter' && this.click()">
+                      <img src="${b.displayIcon || a.displayIcon}" alt=""><span>${b.displayName}</span>
+                    </div>`).join('')}</div>
+                </div>
+                <div class="d-thumb">${im(wide(a) || a.bustPortrait, '')}</div>
+                <div class="d-role">${im(a.role?.displayIcon, '')}${a.role?.displayName || ''}</div>
+              </div>
             </div>
-            <div class="col-md-5 order-first order-md-last"><div class="text-center" style="background:${grad(a)}">${im(a.fullPortrait || a.displayIcon, 'img-fluid', 'max-height:400px')}</div></div>
-          </div>`
+            <div class="agent-extra">
+              ${(a.characterTags || []).map(t => badge(t)).join('')}
+              ${mediaSec('Voice lines', (a.voiceLine?.mediaList || []).map(m => media(m.wave)).join(''), 'mt-3')}
+            </div>
+          </div>`;
+        }
       },
       abilities: {
         title: 'Abilities', bg: () => '#0f1923', img: x => x.displayIcon || x.agent.displayIcon, tag: x => x.agent.displayName, cat: x => slot(x.slot), text: x => clean(x.description),
@@ -446,10 +482,11 @@
     const load = async () => {
       elApp.innerHTML = SPINNER;
       try {
-        const [agents, maps, weapons, themes, tiers, ctiers, bundles] = await Promise.all(
-          ['agents?isPlayableCharacter=true', 'maps', 'weapons', 'themes', 'competitivetiers', 'contenttiers', 'bundles'].map(p => api(p).catch(e => { if (p != 'bundles') throw e; return []; })));
+        const [agents, maps, weapons, themes, tiers, ctiers, bundles, cards] = await Promise.all(
+          ['agents?isPlayableCharacter=true', 'maps', 'weapons', 'themes', 'competitivetiers', 'contenttiers', 'bundles', 'playercards'].map(p => api(p).catch(e => { if (!['bundles', 'playercards'].includes(p)) throw e; return []; })));
         TH = Object.fromEntries(themes.map(t => [t.uuid, t.displayName]));
         CT = Object.fromEntries(ctiers.map(t => [t.uuid, t]));
+        PC = cards.filter(c => c.wideArt);
         D = {
           agents, maps, weapons,
           abilities: agents.flatMap(a => (a.abilities || []).map(b => ({ ...b, agent: a, uuid: a.uuid + b.slot }))),
