@@ -58,9 +58,13 @@
     .over .ph { height: 190px; }
     .tall .card-body, .over .card-body { position: absolute; inset: auto 0 0; padding: 2.5rem .8rem .7rem; background: linear-gradient(transparent, rgba(15, 25, 35, .94)); }
     .over .card-body { text-align: left !important; }
-    .rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x proximity; padding: 0 0 .75rem; }
-    .rail > div { flex: 0 0 190px; scroll-snap-align: start; }
+    .rail { display: flex; gap: 1rem; overflow-x: auto; padding: 0 0 .75rem; scrollbar-width: none; -ms-overflow-style: none; -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+    .rail::-webkit-scrollbar { display: none; }
+    .rail > div { flex: 0 0 190px; transition: opacity .35s, filter .35s; animation: railIn .7s cubic-bezier(.2, .8, .2, 1) calc(min(var(--i, 0), 10) * 60ms) backwards; }
     .rail.over > div { flex-basis: 300px; }
+    @media (hover: hover) { .rail:hover > div:not(:hover) { opacity: .5; filter: saturate(.5) brightness(.85); } }
+    @keyframes railIn { from { opacity: 0; transform: translateY(24px) scale(.94); filter: blur(6px); } }
+    @media (prefers-reduced-motion: reduce) { .rail > div { animation: none; } }
     .feat { aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
     .feat video { width: 100%; height: 100%; object-fit: cover; display: block; }
     .feat .cap { position: absolute; inset: auto 0 0; padding: 3rem 1rem .8rem; background: linear-gradient(transparent, rgba(15, 25, 35, .95)); }
@@ -160,7 +164,7 @@
 
     const T = {
       agents: {
-        title: 'Agents', layout: 'tall', bg: grad, img: a => a.fullPortrait || a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
+        title: 'Agents', layout: 'tall', bg: grad, img: a => a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
         detail: a => `
           <div class="row g-4">
             <div class="col-md-7">
@@ -303,6 +307,68 @@
       <div class="d-flex justify-content-between align-items-center mt-5 mb-3"><h4 class="sec m-0">${capitalizeFirstLetter(s)}</h4><a href="#${s}">View all</a></div>
       <div class="rail ${T[t].layout}">${D[t].map(x => card(t, x, '')).join('')}</div>`;
 
+    let raf, ctrl;
+    const marquee = () => {
+      const rails = [...elApp.querySelectorAll('.rail')];
+      rails.forEach(el => [...el.children].forEach((c, i) => c.style.setProperty('--i', i)));
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      ctrl = new AbortController();
+      const st = rails.map((el, k) => {
+        const n = el.children.length;
+        for (let r = 0; r < 2; r++) [...el.children].slice(0, n).forEach(c => {
+          const d = c.cloneNode(true);
+          d.setAttribute('aria-hidden', 'true');
+          d.querySelector('.card').tabIndex = -1;
+          el.appendChild(d);
+        });
+        const s = { el, n, dir: k % 2 ? -1 : 1, speed: k % 2 ? 50 : 40, pos: 0, last: 0, v: 0, hold: 0, hover: false, focus: false, press: false, drag: null, dragged: false };
+        s.len = () => el.children[n].offsetLeft - el.children[0].offsetLeft;
+        el.scrollLeft = s.len();
+        s.pos = s.last = el.scrollLeft;
+        el.addEventListener('pointerenter', e => s.hover = e.pointerType == 'mouse');
+        el.addEventListener('pointerleave', () => s.hover = false);
+        el.addEventListener('focusin', e => s.focus = e.target.matches(':focus-visible'));
+        el.addEventListener('focusout', () => s.focus = false);
+        el.addEventListener('pointerdown', e => { s.press = true; if (e.pointerType == 'mouse' && e.button == 0) s.drag = { x: e.clientX, left: el.scrollLeft, moved: false }; });
+        el.addEventListener('dragstart', e => e.preventDefault());
+        el.addEventListener('click', e => { if (s.dragged) { e.stopPropagation(); e.preventDefault(); } }, true);
+        return s;
+      });
+      const up = () => st.forEach(s => {
+        if (s.press) s.hold = performance.now() + 1500;
+        s.press = false;
+        if (s.drag?.moved) { s.dragged = true; setTimeout(() => s.dragged = false); }
+        s.drag = null;
+      });
+      document.addEventListener('pointermove', e => st.forEach(s => {
+        if (!s.drag) return;
+        const dx = e.clientX - s.drag.x;
+        if (Math.abs(dx) > 5) s.drag.moved = true;
+        if (s.drag.moved) s.el.scrollLeft = s.drag.left - dx;
+      }), { signal: ctrl.signal });
+      document.addEventListener('pointerup', up, { signal: ctrl.signal });
+      document.addEventListener('pointercancel', up, { signal: ctrl.signal });
+      let prev = performance.now();
+      const loop = now => {
+        const dt = Math.min(now - prev, 50) / 1000;
+        prev = now;
+        for (const s of st) {
+          const el = s.el, r = el.getBoundingClientRect(), L = s.len();
+          if (!L || r.bottom < 0 || r.top > innerHeight) continue;
+          const user = Math.abs(el.scrollLeft - s.last) > 2;
+          if (user) { s.hold = now + 1500; s.v = 0; }
+          if (user || s.press || now < s.hold) { s.pos = s.last = el.scrollLeft; continue; }
+          s.v += ((s.hover || s.focus ? 0 : s.dir * s.speed) - s.v) * Math.min(1, dt * 3);
+          s.pos += s.v * dt;
+          if (s.pos >= 2 * L) s.pos -= L; else if (s.pos < L) s.pos += L;
+          el.scrollLeft = s.pos;
+          s.last = el.scrollLeft;
+        }
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+    };
+
     const picks = () => D.skins.filter(s => vids(s).length).sort(() => Math.random() - .5).slice(0, 3).map(feat).join('');
 
     const shuffle = () => {
@@ -357,8 +423,10 @@
       const h = location.hash.slice(1), s = SECTIONS[h] ? h : 'home';
       elNav.querySelectorAll('a').forEach(a => a.className = 'nav-link' + (!q && a.hash == '#' + s ? ' active' : ''));
       clearInterval(timer);
+      cancelAnimationFrame(raf);
+      ctrl?.abort();
       elApp.innerHTML = q ? results() : s == 'home' ? home() : section(s);
-      if (!q && s == 'home') showcase();
+      if (!q && s == 'home') { showcase(); marquee(); }
     };
 
     const show = (t, key) => {
