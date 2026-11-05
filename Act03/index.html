@@ -163,6 +163,8 @@
     const clean = s => (s || '').replace(/<\/?\w*>/g, '').trim();
     const lab = s => (s || '').split('::').pop();
     const slot = s => s.replace(/(\d)/, ' $1');
+    // Passive/unfinished abilities have no displayIcon in valorant-api.com; fall back to the agent's role icon (also from the API)
+    const abIcon = (b, a) => b.displayIcon || a.role?.displayIcon || a.displayIcon;
     const nm = v => clean(v.displayName).replace(/\s+/g, ' ') + (v.levelItem ? ' (' + lab(v.levelItem) + ')' : '');
     const grad = a => 'linear-gradient(' + (a.backgroundGradientColors || ['0f1923', '0f1923']).map(hex).join() + ')';
     const vids = s => [...s.levels, ...s.chromas].filter(v => v.streamedVideo);
@@ -217,7 +219,7 @@
                   <span class="d-vert">Special abilities</span>
                   <div>${(a.abilities || []).map(b => `
                     <div class="d-ab" role="button" tabindex="0" title="${slot(b.slot)}" onclick="show('abilities', '${a.uuid + b.slot}')" onkeydown="event.key == 'Enter' && this.click()">
-                      <img src="${b.displayIcon || a.displayIcon}" alt=""><span>${b.displayName}</span>
+                      <img src="${abIcon(b, a)}" alt=""><span>${b.displayName}</span>
                     </div>`).join('')}</div>
                 </div>
                 <div class="d-thumb">${im(wide(a) || a.bustPortrait, '')}</div>
@@ -232,10 +234,10 @@
         }
       },
       abilities: {
-        title: 'Abilities', bg: () => '#0f1923', img: x => x.displayIcon || x.agent.displayIcon, tag: x => x.agent.displayName, cat: x => slot(x.slot), text: x => clean(x.description),
+        title: 'Abilities', bg: () => '#0f1923', img: x => abIcon(x, x.agent), tag: x => x.agent.displayName, cat: x => slot(x.slot), text: x => clean(x.description),
         detail: x => `
           <div class="d-flex gap-3 align-items-center mb-3">
-            <img class="bg-dark rounded p-2" width="80" height="80" src="${x.displayIcon || x.agent.displayIcon}">
+            <img class="bg-dark rounded p-2" width="80" height="80" src="${abIcon(x, x.agent)}">
             <div>${badge(slot(x.slot))}<a href="#" onclick="show('agents', '${x.agent.uuid}'); return false">${x.agent.displayName}</a></div>
           </div>
           <p style="white-space: pre-line">${clean(x.description)}</p>`
