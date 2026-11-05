@@ -291,7 +291,8 @@
         }
       },
       bundles: {
-        title: 'Bundles', img: b => b.img, tag: b => b.skins.length + (b.skins.length == 1 ? ' skin' : ' skins'), col: b => tier(b.skins[0]) && hex(tier(b.skins[0]).highlightColor),
+        // art: only bundles that use the API's bundle artwork (which has its own background) fill the whole image box; skin fallbacks stay contained
+        title: 'Bundles', img: b => b.img, art: b => !!b.bundle, tag: b => b.skins.length + (b.skins.length == 1 ? ' skin' : ' skins'), col: b => tier(b.skins[0]) && hex(tier(b.skins[0]).highlightColor),
         cat: b => tier(b.skins[0])?.displayName || 'Other', text: b => b.skins.map(s => s.displayName).join(' '),
         detail: b => `
           ${im(b.bundle?.displayIcon || b.bundle?.verticalPromoImage, 'w-100 rounded mb-3')}
@@ -319,12 +320,12 @@
     };
 
     const card = (t, x, w = 'col-6 col-md-4 col-xl-3') => {
-      const c = T[t], i = c.img(x), col = c.col?.(x);
+      const c = T[t], i = c.img(x), col = c.col?.(x), art = c.art?.(x);
       return `
         <div class="${w}">
           <div class="card h-100 shadow-sm ${c.layout || ''} ${c.spin ? 'armory' : ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
-            <div class="ph ${c.layout ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
-              ${i ? `<img loading="lazy" class="w-100 h-100 ${c.spin ? 'spin' : ''}" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
+            <div class="ph ${c.layout || art ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
+              ${i ? `<img loading="lazy" class="w-100 h-100 ${c.spin ? 'spin' : ''}" style="object-fit: ${art ? 'cover' : c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
             </div>
             <div class="card-body text-center">
               <div class="h6 mb-2">${name(x)}</div>${badge(c.tag(x), col, c.ico?.(x))}
