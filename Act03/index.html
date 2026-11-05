@@ -9,6 +9,7 @@
     integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    @property --orb { syntax: "<color>"; inherits: true; initial-value: #8b97a3; }
     @property --glow { syntax: "<color>"; inherits: true; initial-value: #ff4656; }
     :root { --bg: #0f1923; --panel: #17222e; --panel2: #1f2c3a; --red: #ff4656; --ink: #ece8e1; --mute: #8b97a3; --line: rgba(236, 232, 225, .12);
       --bs-body-bg: var(--bg); --bs-body-color: var(--ink); --cut: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
@@ -64,6 +65,21 @@
       100% { transform: perspective(700px) rotateY(28deg) rotateZ(4deg) translateY(2px); }
     }
     @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+    .orb { --orb: #8b97a3; position: relative; height: 100%; max-width: 100%; aspect-ratio: 1; margin: 0 auto; display: grid; place-items: center; border-radius: 50%; animation: orbFloat 5s ease-in-out infinite;
+      background: radial-gradient(circle, color-mix(in srgb, var(--orb) 24%, transparent), transparent 72%), radial-gradient(circle at 50% 30%, rgba(255, 255, 255, .05), rgba(0, 0, 0, .3));
+      border: 1px solid color-mix(in srgb, var(--orb) 40%, transparent);
+      box-shadow: 0 0 18px color-mix(in srgb, var(--orb) 26%, transparent), inset 0 0 18px color-mix(in srgb, var(--orb) 14%, transparent); transition: box-shadow .3s, border-color .3s, --orb .6s; }
+    .orb::after { content: ""; position: absolute; inset: -5px; border: 2px solid var(--orb); border-radius: 50%; opacity: .35; pointer-events: none;
+      -webkit-mask: conic-gradient(from 45deg, #000 0 90deg, transparent 0 180deg, #000 0 270deg, transparent 0); mask: conic-gradient(from 45deg, #000 0 90deg, transparent 0 180deg, #000 0 270deg, transparent 0); }
+    .orb::before { content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none; filter: blur(5px); opacity: .7;
+      background: conic-gradient(transparent 0 50%, color-mix(in srgb, var(--orb) 45%, transparent) 80%, transparent); animation: orbSpin 8s linear infinite; }
+    .orb::after { animation: orbSpin 14s linear infinite reverse; }
+    @keyframes orbSpin { to { transform: rotate(360deg); } }
+    @keyframes orbFloat { 50% { transform: translateY(-5px); } }
+    .row > div:nth-child(even) .orb { animation-delay: -2.5s; }
+    @media (prefers-reduced-motion: reduce) { .orb, .orb::before, .orb::after { animation: none; } }
+    .orb img { width: 72% !important; height: 72% !important; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--orb) 50%, transparent)); }
+    .card:hover .orb, .card:focus-visible .orb { border-color: color-mix(in srgb, var(--orb) 70%, transparent); box-shadow: 0 0 26px color-mix(in srgb, var(--orb) 38%, transparent), inset 0 0 22px color-mix(in srgb, var(--orb) 20%, transparent); }
     .tall .ph { height: auto; aspect-ratio: 3 / 4; }
     .row .tall .ph { max-height: max(180px, calc((100vh - 344px) / 2)); }
     .over .ph { height: 190px; }
@@ -192,6 +208,22 @@
     const wide = a => PC.find(c => c.displayName.toLowerCase().split(/[^a-z0-9/]+/).includes(a.displayName.toLowerCase()))?.wideArt;
     const rand = a => a[Math.floor(Math.random() * a.length)];
     const im = (u, c = 'img-fluid', s = '') => u ? `<img class="${c}" style="${s}" src="${u}">` : '';
+    // Dominant colour of an icon: bucket opaque, non-grey pixels and average the most populated bucket
+    const tint = img => {
+      try {
+        const g = Object.assign(document.createElement('canvas'), { width: 32, height: 32 }).getContext('2d', { willReadFrequently: true }), b = {};
+        g.drawImage(img, 0, 0, 32, 32);
+        const d = g.getImageData(0, 0, 32, 32).data;
+        for (let i = 0; i < d.length; i += 4) {
+          const [r, gr, bl, a] = [d[i], d[i + 1], d[i + 2], d[i + 3]], mx = Math.max(r, gr, bl), sat = mx - Math.min(r, gr, bl);
+          if (a < 200 || mx < 60 || sat < 40) continue;
+          const k = (r >> 5) << 6 | (gr >> 5) << 3 | bl >> 5, e = b[k] ||= [0, 0, 0, 0, 0];
+          e[0] += r; e[1] += gr; e[2] += bl; e[3] += sat; e[4]++;
+        }
+        const t = Object.values(b).sort((x, y) => y[3] - x[3])[0];
+        if (t) img.closest('.orb').style.setProperty('--orb', `rgb(${[0, 1, 2].map(i => Math.round(t[i] / t[4])).join()})`);
+      } catch (e) { /* tainted canvas: keep the API colour */ }
+    };
     const kv = (k, v) => v == null ? '' : `<div><b>${k}:</b> ${v}</div>`;
     const media = (url, tag = 'audio') => url ? `<${tag} controls playsinline preload="none" class="w-100 my-1" src="${url}"></${tag}>` : '';
     const mediaSec = (title, html, cls = 'mt-4') => html ? `<div class="media-sec"><h6 class="${cls}">${title}</h6>${html}</div>` : '';
@@ -312,7 +344,7 @@
             </div>`).join('')}</div>`
       },
       ranks: {
-        title: 'Ranks', img: r => r.largeIcon, tag: r => 'Tier ' + r.tier, col: r => hex(r.color), cat: r => capitalizeFirstLetter(r.divisionName.toLowerCase()), text: r => r.divisionName,
+        orb: true, title: 'Ranks', img: r => r.largeIcon, tag: r => 'Tier ' + r.tier, col: r => hex(r.color), cat: r => capitalizeFirstLetter(r.divisionName.toLowerCase()), text: r => r.divisionName,
         detail: r => `
           <div class="text-center mb-3">${im(r.largeIcon, 'img-fluid', 'max-height:200px')}</div>
           ${kv('Tier', r.tier)}${kv('Division', r.divisionName)}${kv('Colour', badge(hex(r.color), hex(r.color)))}`
@@ -321,11 +353,12 @@
 
     const card = (t, x, w = 'col-6 col-md-4 col-xl-3') => {
       const c = T[t], i = c.img(x), col = c.col?.(x), art = c.art?.(x);
+      const pic = i ? `<img loading="lazy" class="w-100 h-100 ${c.spin ? 'spin' : ''}" style="object-fit: ${art ? 'cover' : c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="" ${c.orb ? 'crossorigin="anonymous" onload="tint(this)" onerror="this.onerror = null; this.removeAttribute(\'crossorigin\'); this.src = this.src"' : ''}>` : '';
       return `
         <div class="${w}">
           <div class="card h-100 shadow-sm ${c.layout || ''} ${c.spin ? 'armory' : ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
             <div class="ph ${c.layout || art ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
-              ${i ? `<img loading="lazy" class="w-100 h-100 ${c.spin ? 'spin' : ''}" style="object-fit: ${art ? 'cover' : c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
+              ${c.orb ? `<div class="orb" style="--orb: ${col}">${pic}</div>` : pic}
             </div>
             <div class="card-body text-center">
               <div class="h6 mb-2">${name(x)}</div>${badge(c.tag(x), col, c.ico?.(x))}
