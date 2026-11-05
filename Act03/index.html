@@ -186,9 +186,24 @@
     const variant = (i, v) => { document.getElementById('skinImg').src = i; if (v) play(v); };
     const badge = (t, c, ic) => `<span class="badge chip rounded-1 me-1" ${c ? `style="background:${c};border-color:${c};color:#fff"` : ''}>${ic ? im(ic, '', 'width:14px;margin-right:4px;vertical-align:-2px') : ''}${t}</span>`;
 
+    const TAGS = [
+      ['Mobility', /dash|teleport|propel|launch|leap|\bfly\b|flight|jump|updraft|tailwind|blast pack|zipline/],
+      ['Healing', /heal|revive|regenerat/],
+      ['Information', /reveal|detect|scan|recon|track|sonar|ping|alert/],
+      ['Vision Block', /smoke|obscure|block(s|ing)? vision/],
+      ['Crowd Control', /stun|concuss|slow|suppress|blind|flash|nearsight|vulnerable|hinder|decay|cripple/],
+      ['Area Denial', /molotov|\bfire\b|burn|trap|zone|barrier|lockdown|\bmines?\b|turret/]
+    ];
+    const tags = a => {
+      if (a.characterTags?.length) return a.characterTags;
+      const ds = (a.abilities || []).map(b => clean(b.description).toLowerCase());
+      const t = TAGS.map(([n, re]) => [n, ds.filter(d => re.test(d)).length]).filter(x => x[1]).sort((x, y) => y[1] - x[1]).slice(0, 3).map(x => x[0]);
+      return t.length ? t : [a.role?.displayName].filter(Boolean);
+    };
+
     const T = {
       agents: {
-        title: 'Agents', layout: 'tall', bg: grad, img: a => a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
+        title: 'Agents', layout: 'tall', fit: 'cover', bg: grad, img: a => a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
         detail: a => {
           const ac = i => hex(a.backgroundGradientColors?.[i] ?? a.backgroundGradientColors?.[0]);
           return `
@@ -210,7 +225,7 @@
               </div>
             </div>
             <div class="agent-extra">
-              ${(a.characterTags || []).map(t => badge(t)).join('')}
+              ${tags(a).map(t => badge(t)).join('')}
               ${mediaSec('Voice lines', (a.voiceLine?.mediaList || []).map(m => media(m.wave)).join(''), 'mt-3')}
             </div>
           </div>`;
@@ -296,7 +311,7 @@
         <div class="${w}">
           <div class="card h-100 shadow-sm ${c.layout || ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
             <div class="ph ${c.layout ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
-              ${i ? `<img loading="lazy" class="w-100 h-100" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'bottom' : 'center'}" src="${i}" alt="">` : ''}
+              ${i ? `<img loading="lazy" class="w-100 h-100" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
             </div>
             <div class="card-body text-center">
               <div class="h6 mb-2">${name(x)}</div>${badge(c.tag(x), col, c.ico?.(x))}
