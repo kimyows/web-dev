@@ -54,6 +54,16 @@
     .card, .feat { position: relative; background: linear-gradient(160deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 0; clip-path: var(--cut); cursor: pointer; transition: transform .15s, border-color .15s; }
     .card:hover, .card:focus-visible, .feat:hover, .feat:focus-visible { transform: translateY(-3px); border-color: var(--red); outline: 0; }
     .ph { height: 150px; overflow: hidden; }
+    .spin { transform-origin: 50% 60%; will-change: transform; animation: sway 7s cubic-bezier(.45, 0, .55, 1) calc(var(--i, 0) * -.9s) infinite alternate; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .55)); transition: scale .45s cubic-bezier(.2, .8, .2, 1); }
+    .row > div:nth-child(3n+2) .spin { animation-delay: -2.3s; }
+    .row > div:nth-child(3n) .spin { animation-delay: -4.6s; }
+    .armory:hover .spin, .armory:focus-visible .spin, .stage:hover .spin { scale: 1.1; }
+    @keyframes sway {
+      0% { transform: perspective(700px) rotateY(-28deg) rotateZ(-4deg) translateY(2px); }
+      50% { transform: perspective(700px) rotateY(0) rotateZ(0) translateY(-5px); }
+      100% { transform: perspective(700px) rotateY(28deg) rotateZ(4deg) translateY(2px); }
+    }
+    @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
     .tall .ph { height: auto; aspect-ratio: 3 / 4; }
     .row .tall .ph { max-height: max(180px, calc((100vh - 344px) / 2)); }
     .over .ph { height: 190px; }
@@ -252,11 +262,11 @@
           ${(m.callouts || []).map(c => badge(c.superRegionName + ' ' + c.regionName)).join('')}`
       },
       weapons: {
-        title: 'Weapons', img: w => w.displayIcon, tag: w => lab(w.category), cat: w => lab(w.category), text: w => lab(w.category),
+        title: 'Weapons', spin: true, img: w => w.displayIcon, tag: w => lab(w.category), cat: w => lab(w.category), text: w => lab(w.category),
         detail: w => {
           const s = w.weaponStats, skins = D.skins.filter(k => k.weapon == w);
           return `
-          ${im(w.displayIcon, 'img-fluid d-block mx-auto mb-3', 'max-height:160px')}
+          <div class="stage p-3 mb-3">${im(w.displayIcon, 'img-fluid d-block mx-auto spin', 'max-height:160px')}</div>
           ${kv('Category', lab(w.category))}${kv('Cost', w.shopData?.cost)}${kv('Fire rate', s?.fireRate)}${kv('Magazine', s?.magazineSize)}
           ${kv('Reload (s)', s?.reloadTimeSeconds)}${kv('Equip (s)', s?.equipTimeSeconds)}${kv('Wall penetration', s?.wallPenetration && lab(s.wallPenetration))}
           ${s?.damageRanges ? `<table class="table table-sm mt-3"><tr><th>Range</th><th>Head</th><th>Body</th><th>Leg</th></tr>${s.damageRanges.map(r =>
@@ -266,12 +276,12 @@
         }
       },
       skins: {
-        title: 'Skins', img: s => s.img, tag: s => CT[s.contentTierUuid]?.displayName || 'Standard', col: s => CT[s.contentTierUuid] && hex(CT[s.contentTierUuid].highlightColor),
+        title: 'Skins', spin: true, img: s => s.img, tag: s => CT[s.contentTierUuid]?.displayName || 'Standard', col: s => CT[s.contentTierUuid] && hex(CT[s.contentTierUuid].highlightColor),
         cat: s => lab(s.weapon.category), text: s => TH[s.themeUuid],
         detail: s => {
           const vs = vids(s), th = TH[s.themeUuid], ct = CT[s.contentTierUuid];
           return `
-          <div class="p-3 mb-3 text-center" style="background: radial-gradient(circle at 50% 115%, ${ct ? hex(ct.highlightColor) : '#8b97a3'}77, transparent 70%), var(--panel2)"><img id="skinImg" class="img-fluid" style="max-height:220px" src="${s.img}"></div>
+          <div class="stage p-3 mb-3 text-center" style="background: radial-gradient(circle at 50% 115%, ${ct ? hex(ct.highlightColor) : '#8b97a3'}77, transparent 70%), var(--panel2)"><img id="skinImg" class="img-fluid spin" style="max-height:220px" src="${s.img}"></div>
           ${badge(ct?.displayName || 'Standard', ct && hex(ct.highlightColor))}<a href="#" onclick="show('weapons', '${s.weapon.uuid}'); return false">${s.weapon.displayName}</a>
           ${th && D.bundles.some(b => b.uuid == s.themeUuid) ? kv('Bundle', `<a href="#" onclick="show('bundles', '${s.themeUuid}'); return false">${th}</a>`) : th ? kv('Collection', `<a href="#" data-q="${th.replace(/"/g, '&quot;')}" onclick="goSearch(this.dataset.q); return false">${th}</a>`) : ''}
           ${vs.length ? `<div class="media-sec"><h6 class="mt-3">Preview (video with sound)</h6><video id="pv" controls playsinline preload="none" class="w-100 rounded" poster="${s.img}" src="${vs[0].streamedVideo}"></video>
@@ -312,9 +322,9 @@
       const c = T[t], i = c.img(x), col = c.col?.(x);
       return `
         <div class="${w}">
-          <div class="card h-100 shadow-sm ${c.layout || ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
+          <div class="card h-100 shadow-sm ${c.layout || ''} ${c.spin ? 'armory' : ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
             <div class="ph ${c.layout ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
-              ${i ? `<img loading="lazy" class="w-100 h-100" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
+              ${i ? `<img loading="lazy" class="w-100 h-100 ${c.spin ? 'spin' : ''}" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'right top' : 'center'}" src="${i}" alt="">` : ''}
             </div>
             <div class="card-body text-center">
               <div class="h6 mb-2">${name(x)}</div>${badge(c.tag(x), col, c.ico?.(x))}
