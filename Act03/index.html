@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VALODEX</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @property --glow { syntax: "<color>"; inherits: true; initial-value: #ff4656; }
+    :root { --bg: #0f1923; --panel: #17222e; --panel2: #1f2c3a; --red: #ff4656; --ink: #ece8e1; --mute: #8b97a3; --line: rgba(236, 232, 225, .12);
+      --bs-body-bg: var(--bg); --bs-body-color: var(--ink); --cut: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
+    body { font-family: 'Barlow', system-ui, sans-serif; background: radial-gradient(900px 500px at 85% -10%, rgba(255, 70, 86, .15), transparent 60%), radial-gradient(700px 500px at 0 100%, rgba(60, 110, 170, .18), transparent 60%), var(--bg) fixed; }
+    h1, h4, h5, h6, .h2, .h5, .h6, .logo { font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif; font-weight: 700; letter-spacing: .02em; }
+    .text-muted { color: var(--mute) !important; }
+    a { color: var(--red); }
+    .side { width: 220px; position: fixed; inset: 0 auto 0 0; padding: 1.5rem 0; background: rgba(10, 17, 24, .92); border-right: 1px solid var(--line); z-index: 1020; display: flex; flex-direction: column; }
+    .main { margin-left: 220px; padding: 1.5rem 2rem 4rem; }
+    .logo { padding: 0 1.5rem 1.5rem; font-size: 2.4rem; color: var(--ink); text-decoration: none; line-height: 1; }
+    .logo span { color: var(--red); }
+    .nav-link { color: var(--mute); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; font-size: .85rem; border-left: 3px solid transparent; padding: .7rem 1.5rem; border-radius: 0; }
+    .nav-link:hover { color: var(--ink); }
+    .nav-link.active { color: var(--red); border-color: var(--red); background: linear-gradient(90deg, rgba(255, 70, 86, .16), transparent); }
+    @media (max-width: 991px) { .side { position: static; width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; padding: .75rem 1rem; } .main { margin-left: 0; padding: 1rem; } .logo { padding: 0 1rem 0 0; font-size: 1.9rem; } .nav-link { padding: .4rem .7rem; border: 0; border-bottom: 2px solid transparent; } .nav-link.active { border-color: var(--red); background: none; } }
+    .form-control { background: rgba(23, 34, 46, .8); border: 1px solid var(--line); color: var(--ink); border-radius: 4px; padding: .75rem 1rem; }
+    .form-control:focus { background: var(--panel); color: var(--ink); border-color: var(--red); box-shadow: 0 0 0 3px rgba(255, 70, 86, .15); }
+    .search { max-width: 560px; }
+    .btn { border-radius: 2px; font-weight: 600; }
+    .btn-danger { --bs-btn-bg: var(--red); --bs-btn-border-color: var(--red); --bs-btn-hover-bg: #e03a49; --bs-btn-hover-border-color: #e03a49; }
+    .btn-outline-danger { --bs-btn-color: var(--red); --bs-btn-border-color: var(--line); --bs-btn-hover-bg: var(--red); --bs-btn-hover-border-color: var(--red); --bs-btn-hover-color: #fff; --bs-btn-active-bg: var(--red); --bs-btn-active-border-color: var(--red); }
+    .pager { display: flex; width: fit-content; background: rgba(23, 34, 46, .8); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+    .pager button { background: none; border: 0; color: var(--ink); font-weight: 600; padding: .55rem 1.1rem; transition: background .15s; }
+    .pager button:hover:not(:disabled) { background: rgba(255, 70, 86, .16); }
+    .pager button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+    .pager button:disabled { color: var(--mute); opacity: .5; cursor: default; }
+    .pager span { min-width: 5.5rem; padding: .55rem 1rem; text-align: center; color: var(--red); font-weight: 500; font-variant-numeric: tabular-nums; border: solid var(--line); border-width: 0 1px; }
+    .tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--mute); padding: .4rem .9rem; font-weight: 600; }
+    .tab:hover, .tab.on { color: var(--ink); border-color: var(--red); }
+    .hero { position: relative; padding: 3rem 2rem; margin: 3rem 0 2rem; transition: --glow 1s; background: radial-gradient(520px 420px at 85% 70%, color-mix(in srgb, var(--glow) 55%, transparent), transparent), linear-gradient(115deg, rgba(255, 70, 86, .32), rgba(23, 34, 46, .9) 62%), var(--panel); border: 1px solid var(--line); border-radius: 6px; }
+    .hero h1 { font-size: clamp(2.6rem, 7vw, 4.8rem); line-height: .95; }
+    .showcase { position: absolute; right: 3%; bottom: 0; width: 42%; height: 130%; cursor: pointer; }
+    .showcase > * { animation: pop .7s cubic-bezier(.2, .8, .2, 1); }
+    .hero-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: bottom; z-index: 1; filter: drop-shadow(0 10px 30px rgba(0, 0, 0, .5)); }
+    .showname { position: absolute; top: 12%; right: -2%; font: 700 clamp(5rem, 12vw, 9rem) / 1 'Barlow Condensed', sans-serif; text-transform: uppercase; white-space: nowrap; color: transparent; -webkit-text-stroke: 2px rgba(255, 255, 255, .14); }
+    .showcase .cap { position: absolute; right: 0; bottom: 1rem; z-index: 2; text-align: right; text-shadow: 0 2px 12px #000; }
+    .bar { width: 120px; height: 2px; margin: .6rem 0 0 auto; background: var(--red); transform-origin: left; animation: fill 6s linear forwards; }
+    #feats { transition: opacity .2s; }
+    @keyframes pop { from { opacity: 0; transform: translateX(40px) scale(.96); filter: blur(8px); } }
+    @keyframes fill { from { transform: scaleX(0); } }
+    @media (prefers-reduced-motion: reduce) { .showcase > *, .bar { animation: none; } }
+    .sec { border-left: 4px solid var(--red); padding-left: .75rem; }
+    .card, .feat { position: relative; background: linear-gradient(160deg, var(--panel2), var(--panel)); border: 1px solid var(--line); border-radius: 0; clip-path: var(--cut); cursor: pointer; transition: transform .15s, border-color .15s; }
+    .card:hover, .card:focus-visible, .feat:hover, .feat:focus-visible { transform: translateY(-3px); border-color: var(--red); outline: 0; }
+    .ph { height: 150px; overflow: hidden; }
+    .tall .ph { height: auto; aspect-ratio: 3 / 4; }
+    .over .ph { height: 190px; }
+    .tall .card-body, .over .card-body { position: absolute; inset: auto 0 0; padding: 2.5rem .8rem .7rem; background: linear-gradient(transparent, rgba(15, 25, 35, .94)); }
+    .over .card-body { text-align: left !important; }
+    .rail { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x proximity; padding: 0 0 .75rem; }
+    .rail > div { flex: 0 0 190px; scroll-snap-align: start; }
+    .rail.over > div { flex-basis: 300px; }
+    .feat { aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+    .feat video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .feat .cap { position: absolute; inset: auto 0 0; padding: 3rem 1rem .8rem; background: linear-gradient(transparent, rgba(15, 25, 35, .95)); }
+    .feat .snd { position: absolute; top: .6rem; right: 1.6rem; width: 2.2rem; height: 2.2rem; border: 1px solid var(--line); background: rgba(15, 25, 35, .75); color: var(--ink); border-radius: 2px; }
+    .feat .snd:hover { border-color: var(--red); }
+    .tile { width: 92px; padding: .7rem .4rem; text-align: center; background: var(--panel2); border: 1px solid var(--line); clip-path: var(--cut); cursor: pointer; transition: border-color .15s; }
+    .tile:hover { border-color: var(--red); }
+    .tile img { width: 44px; height: 44px; }
+    .tile span { display: block; font-size: .72rem; line-height: 1.1; margin-top: .35rem; }
+    .tile small { color: var(--mute); font-size: .65rem; }
+    .thumb { background: var(--panel2); border-radius: 2px; }
+    .chip { background: var(--panel2); border: 1px solid var(--line); color: var(--ink); font-weight: 600; }
+    .modal-content { background: radial-gradient(500px 250px at 100% 0, rgba(255, 70, 86, .12), transparent), var(--panel); border: 1px solid var(--line); border-top: 3px solid var(--red); border-radius: 0; }
+    .modal-header { border-color: var(--line); }
+    .modal-title { font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; font-weight: 700; }
+    .table { --bs-table-bg: transparent; }
+    audio, video { color-scheme: dark; }
+  </style>
+</head>
+
+<body>
+  <aside class="side">
+    <a href="#home" class="logo">VALO<span>DEX</span></a>
+    <ul class="nav flex-lg-column" id="nav"></ul>
+    <div class="mt-auto px-4 small text-muted d-none d-lg-block">Data from valorant-api.com</div>
+  </aside>
+
+  <main class="main">
+    <input type="search" class="form-control search mb-4" placeholder="Search agents, abilities, maps, weapons, skins, ranks" aria-label="Search" id="searchInput">
+    <div id="app"></div>
+  </main>
+
+  <div class="modal fade" id="detail" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+  <script>
+    const SECTIONS = { agents: ['agents'], abilities: ['abilities'], maps: ['maps'], arsenal: ['weapons', 'bundles'], ranks: ['ranks'] };
+    const SPINNER = '<div class="text-center my-5"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+    const cols = () => innerWidth >= 1200 ? 4 : innerWidth >= 768 ? 3 : 2;
+    var D, TH = {}, CT = {}, q = '', filter = 'All', pg = {}, limit = 48, timer;
+    var elApp = document.getElementById("app");
+    var elNav = document.getElementById("nav");
+    var elSearch = document.getElementById("searchInput");
+    var elDetail = document.getElementById("detail");
+    var elTitle = document.getElementById("detailTitle");
+    var elBody = document.getElementById("detailBody");
+
+    function capitalizeFirstLetter(str) {
+      if (!str) return str;
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    const api = path => fetch('https://valorant-api.com/v1/' + path)
+      .then(r => { if (!r.ok) throw new Error(path + ' returned ' + r.status); return r.json(); })
+      .then(json => json.data);
+
+    const id = x => x.uuid ?? x.tier;
+    const name = x => x.displayName || x.tierName;
+    const hex = c => c ? '#' + c.slice(0, 6) : '#6c757d';
+    const clean = s => (s || '').replace(/<\/?\w*>/g, '').trim();
+    const lab = s => (s || '').split('::').pop();
+    const slot = s => s.replace(/(\d)/, ' $1');
+    const nm = v => clean(v.displayName).replace(/\s+/g, ' ') + (v.levelItem ? ' (' + lab(v.levelItem) + ')' : '');
+    const grad = a => 'linear-gradient(' + (a.backgroundGradientColors || ['0f1923', '0f1923']).map(hex).join() + ')';
+    const vids = s => [...s.levels, ...s.chromas].filter(v => v.streamedVideo);
+    const makeBundles = (skins, bundles) => {
+      const art = {}, by = {};
+      bundles.forEach(b => (art[b.displayName] ||= []).push(b));
+      skins.filter(s => TH[s.themeUuid] && s.uuid != s.weapon.defaultSkinUuid).forEach(s => (by[s.themeUuid] ||= []).push(s));
+      return Object.entries(by).map(([uuid, skins]) => {
+        const bundle = art[TH[uuid]]?.shift();
+        return { uuid, displayName: TH[uuid], bundle, skins, img: bundle?.displayIcon || bundle?.verticalPromoImage || skins[0].img };
+      }).sort((a, b) => a.displayName.localeCompare(b.displayName));
+    };
+    const tier = s => CT[s.contentTierUuid];
+    const rand = a => a[Math.floor(Math.random() * a.length)];
+    const im = (u, c = 'img-fluid', s = '') => u ? `<img class="${c}" style="${s}" src="${u}">` : '';
+    const kv = (k, v) => v == null ? '' : `<div><b>${k}:</b> ${v}</div>`;
+    const media = (url, tag = 'audio') => url ? `<${tag} controls playsinline preload="none" class="w-100 my-1" src="${url}"></${tag}>` : '';
+    const mediaSec = (title, html, cls = 'mt-4') => html ? `<div class="media-sec"><h6 class="${cls}">${title}</h6>${html}</div>` : '';
+    const play = u => { const v = document.getElementById('pv'); if (v) { v.src = u; v.play().catch(() => { }); } };
+    const variant = (i, v) => { document.getElementById('skinImg').src = i; if (v) play(v); };
+    const badge = (t, c, ic) => `<span class="badge chip rounded-1 me-1" ${c ? `style="background:${c};border-color:${c};color:#fff"` : ''}>${ic ? im(ic, '', 'width:14px;margin-right:4px;vertical-align:-2px') : ''}${t}</span>`;
+
+    const T = {
+      agents: {
+        title: 'Agents', layout: 'tall', bg: grad, img: a => a.fullPortrait || a.displayIcon, ico: a => a.role?.displayIcon, tag: a => a.role?.displayName || '', cat: a => a.role?.displayName, text: a => a.description,
+        detail: a => `
+          <div class="row g-4">
+            <div class="col-md-7">
+              ${badge(a.role?.displayName, null, a.role?.displayIcon)}${(a.characterTags || []).map(t => badge(t)).join('')}
+              <p class="mt-3 text-muted">${a.description}</p>
+              ${mediaSec('Voice lines', (a.voiceLine?.mediaList || []).map(m => media(m.wave)).join(''))}
+              <h6 class="mt-4">Abilities</h6>
+              <div class="d-flex flex-wrap gap-2">${(a.abilities || []).map(b => `
+                <div class="tile" role="button" title="${b.displayName}" onclick="show('abilities', '${a.uuid + b.slot}')">
+                  <img src="${b.displayIcon || a.displayIcon}"><span>${b.displayName}</span><small>${slot(b.slot)}</small>
+                </div>`).join('')}</div>
+            </div>
+            <div class="col-md-5 order-first order-md-last"><div class="text-center" style="background:${grad(a)}">${im(a.fullPortrait || a.displayIcon, 'img-fluid', 'max-height:400px')}</div></div>
+          </div>`
+      },
+      abilities: {
+        title: 'Abilities', bg: () => '#0f1923', img: x => x.displayIcon || x.agent.displayIcon, tag: x => x.agent.displayName, cat: x => slot(x.slot), text: x => clean(x.description),
+        detail: x => `
+          <div class="d-flex gap-3 align-items-center mb-3">
+            <img class="bg-dark rounded p-2" width="80" height="80" src="${x.displayIcon || x.agent.displayIcon}">
+            <div>${badge(slot(x.slot))}<a href="#" onclick="show('agents', '${x.agent.uuid}'); return false">${x.agent.displayName}</a></div>
+          </div>
+          <p style="white-space: pre-line">${clean(x.description)}</p>`
+      },
+      maps: {
+        title: 'Maps', layout: 'over', fit: 'cover', img: m => m.splash, tag: m => m.tacticalDescription || 'No sites', cat: m => m.tacticalDescription ? 'Standard' : 'Other', text: m => m.narrativeDescription,
+        detail: m => `
+          ${im(m.splash, 'w-100 rounded mb-3')}${im(m.displayIcon, 'img-fluid rounded mb-3 d-block', 'max-height:320px')}
+          <p>${m.narrativeDescription || ''}</p>${kv('Sites', m.tacticalDescription)}${kv('Coordinates', m.coordinates)}
+          <h6 class="mt-3">Callouts (${m.callouts?.length || 0})</h6>
+          ${(m.callouts || []).map(c => badge(c.superRegionName + ' ' + c.regionName)).join('')}`
+      },
+      weapons: {
+        title: 'Weapons', img: w => w.displayIcon, tag: w => lab(w.category), cat: w => lab(w.category), text: w => lab(w.category),
+        detail: w => {
+          const s = w.weaponStats, skins = D.skins.filter(k => k.weapon == w);
+          return `
+          ${im(w.displayIcon, 'img-fluid d-block mx-auto mb-3', 'max-height:160px')}
+          ${kv('Category', lab(w.category))}${kv('Cost', w.shopData?.cost)}${kv('Fire rate', s?.fireRate)}${kv('Magazine', s?.magazineSize)}
+          ${kv('Reload (s)', s?.reloadTimeSeconds)}${kv('Equip (s)', s?.equipTimeSeconds)}${kv('Wall penetration', s?.wallPenetration && lab(s.wallPenetration))}
+          ${s?.damageRanges ? `<table class="table table-sm mt-3"><tr><th>Range</th><th>Head</th><th>Body</th><th>Leg</th></tr>${s.damageRanges.map(r =>
+            `<tr><td>${r.rangeStartMeters}-${r.rangeEndMeters}m</td><td>${+r.headDamage.toFixed(1)}</td><td>${+r.bodyDamage.toFixed(1)}</td><td>${+r.legDamage.toFixed(1)}</td></tr>`).join('')}</table>` : ''}
+          <h6 class="mt-3">Skins (${skins.length})</h6>
+          <div class="d-flex flex-wrap gap-2">${skins.map(k => `<img loading="lazy" class="rounded thumb p-1" width="72" height="48" style="object-fit:contain;cursor:pointer" title="${k.displayName}" src="${k.img}" onclick="show('skins', '${k.uuid}')">`).join('')}</div>`;
+        }
+      },
+      skins: {
+        title: 'Skins', img: s => s.img, tag: s => CT[s.contentTierUuid]?.displayName || 'Standard', col: s => CT[s.contentTierUuid] && hex(CT[s.contentTierUuid].highlightColor),
+        cat: s => lab(s.weapon.category), text: s => TH[s.themeUuid],
+        detail: s => {
+          const vs = vids(s), th = TH[s.themeUuid], ct = CT[s.contentTierUuid];
+          return `
+          <div class="p-3 mb-3 text-center" style="background: radial-gradient(circle at 50% 115%, ${ct ? hex(ct.highlightColor) : '#8b97a3'}77, transparent 70%), var(--panel2)"><img id="skinImg" class="img-fluid" style="max-height:220px" src="${s.img}"></div>
+          ${badge(ct?.displayName || 'Standard', ct && hex(ct.highlightColor))}<a href="#" onclick="show('weapons', '${s.weapon.uuid}'); return false">${s.weapon.displayName}</a>
+          ${th && D.bundles.some(b => b.uuid == s.themeUuid) ? kv('Bundle', `<a href="#" onclick="show('bundles', '${s.themeUuid}'); return false">${th}</a>`) : th ? kv('Collection', `<a href="#" data-q="${th.replace(/"/g, '&quot;')}" onclick="goSearch(this.dataset.q); return false">${th}</a>`) : ''}
+          ${vs.length ? `<div class="media-sec"><h6 class="mt-3">Preview (video with sound)</h6><video id="pv" controls playsinline preload="none" class="w-100 rounded" poster="${s.img}" src="${vs[0].streamedVideo}"></video>
+            <div class="d-flex flex-wrap gap-2 my-2">${vs.map(v => `<button class="btn btn-sm btn-outline-danger" onclick="play('${v.streamedVideo}')">${nm(v)}</button>`).join('')}</div></div>` : ''}
+          ${s.chromas.length > 1 ? `<h6 class="mt-3">Variants</h6><div class="d-flex flex-wrap gap-2">${s.chromas.map(c =>
+            `<img class="rounded thumb p-1" width="72" height="48" style="object-fit:contain;cursor:pointer" title="${nm(c)}" src="${c.swatch || c.displayIcon || c.fullRender}" onclick="variant('${c.fullRender || s.img}', '${c.streamedVideo || ''}')">`).join('')}</div>` : ''}`;
+        }
+      },
+      bundles: {
+        title: 'Bundles', img: b => b.img, tag: b => b.skins.length + (b.skins.length == 1 ? ' skin' : ' skins'), col: b => tier(b.skins[0]) && hex(tier(b.skins[0]).highlightColor),
+        cat: b => tier(b.skins[0])?.displayName || 'Other', text: b => b.skins.map(s => s.displayName).join(' '),
+        detail: b => `
+          ${im(b.bundle?.displayIcon || b.bundle?.verticalPromoImage, 'w-100 rounded mb-3')}
+          ${badge(b.skins.length + ' skins')}${[...new Set(b.skins.map(s => s.weapon.displayName))].map(w => badge(w)).join('')}
+          ${b.bundle?.description ? `<p class="mt-3 text-muted" style="white-space: pre-line">${clean(b.bundle.description)}</p>` : ''}
+          <h6 class="mt-4">Included skins</h6>
+          <div class="row g-3">${b.skins.map(s => `
+            <div class="col-6 col-md-4">
+              <div class="p-2 h-100" style="background: var(--panel2); border: 1px solid var(--line)">
+                <div role="button" tabindex="0" onclick="show('skins', '${s.uuid}')" onkeydown="event.key == 'Enter' && this.click()">
+                  <div class="d-flex align-items-center justify-content-center" style="height:80px">${im(s.img, 'mw-100 mh-100')}</div>
+                  <div class="small fw-semibold mt-1">${s.displayName}</div>
+                  ${badge(s.weapon.displayName, null, null)}${tier(s) ? badge(tier(s).displayName, hex(tier(s).highlightColor)) : ''}
+                </div>
+                ${s.chromas.length > 1 ? `<div class="d-flex flex-wrap gap-1 mt-2">${s.chromas.map(c => `<img class="thumb" width="28" height="28" style="object-fit:contain;cursor:pointer" title="${nm(c)}" src="${c.swatch || c.displayIcon || c.fullRender}" onclick="show('skins', '${s.uuid}')">`).join('')}</div>` : ''}
+              </div>
+            </div>`).join('')}</div>`
+      },
+      ranks: {
+        title: 'Ranks', img: r => r.largeIcon, tag: r => 'Tier ' + r.tier, col: r => hex(r.color), cat: r => capitalizeFirstLetter(r.divisionName.toLowerCase()), text: r => r.divisionName,
+        detail: r => `
+          <div class="text-center mb-3">${im(r.largeIcon, 'img-fluid', 'max-height:200px')}</div>
+          ${kv('Tier', r.tier)}${kv('Division', r.divisionName)}${kv('Colour', badge(hex(r.color), hex(r.color)))}`
+      }
+    };
+
+    const card = (t, x, w = 'col-6 col-md-4 col-xl-3') => {
+      const c = T[t], i = c.img(x), col = c.col?.(x);
+      return `
+        <div class="${w}">
+          <div class="card h-100 shadow-sm ${c.layout || ''}" role="button" tabindex="0" onclick="show('${t}', '${id(x)}')" onkeydown="event.key == 'Enter' && this.click()">
+            <div class="ph ${c.layout ? '' : 'p-3'}" style="background: ${c.bg ? c.bg(x) : 'transparent'}">
+              ${i ? `<img loading="lazy" class="w-100 h-100" style="object-fit: ${c.fit || 'contain'}; object-position: ${c.layout == 'tall' ? 'bottom' : 'center'}" src="${i}" alt="">` : ''}
+            </div>
+            <div class="card-body text-center">
+              <div class="h6 mb-2">${name(x)}</div>${badge(c.tag(x), col, c.ico?.(x))}
+            </div>
+          </div>
+        </div>`;
+    };
+
+    const chips = opts => `<div class="d-flex flex-wrap my-3 border-bottom" style="border-color: var(--line) !important">${opts.map(c =>
+      `<button class="tab ${c == filter ? 'on' : ''}" onclick="filter = '${c}'; pg = {}; limit = 48; route()">${c}</button>`).join('')}</div>`;
+
+    const pager = (t, p, n) => `
+      <nav class="pager" aria-label="${T[t].title} pages">
+        <button onclick="go('${t}', ${p == 1 ? n : p - 1})">Previous</button>
+        <span aria-live="polite">${p} / ${n}</span>
+        <button onclick="go('${t}', ${p == n ? 1 : p + 1})">Next</button>
+      </nav>`;
+    const go = (t, p) => { pg[t] = p; route(); };
+
+    const groups = pairs => pairs.map(([t, xs]) => {
+      const all = filter == 'All', pp = cols() * (t == 'abilities' || t == 'maps' ? 3 : 2);
+      const n = all ? Math.ceil(xs.length / pp) : 1, p = Math.min(pg[t] || 1, n);
+      return xs.length ? `
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-4 mb-2">
+        <h5 class="sec m-0">${T[t].title} ${badge(xs.length)}</h5>${n > 1 ? pager(t, p, n) : ''}
+      </div>
+      <div class="row g-3">${(all ? xs.slice((p - 1) * pp, p * pp) : xs.slice(0, limit)).map(x => card(t, x)).join('')}</div>
+      ${!all && xs.length > limit ? '<button class="btn btn-outline-danger mt-3" onclick="limit += 48; route()">Show more</button>' : ''}` : '';
+    }).join('') || '<div class="text-muted text-center my-5">No results.</div>';
+
+    const feat = s => {
+      const ct = CT[s.contentTierUuid];
+      return `
+        <div class="col-md-4">
+          <div class="feat" role="button" tabindex="0" onclick="show('skins', '${s.uuid}')" onkeydown="event.key == 'Enter' && this.click()">
+            <video src="${vids(s)[0].streamedVideo}" poster="${s.img}" autoplay muted loop playsinline preload="metadata"></video>
+            <button class="snd" aria-label="Toggle sound" onclick="event.stopPropagation(); const m = this.parentNode.querySelector('video'); m.muted = !m.muted; this.textContent = m.muted ? '🔇' : '🔊'">🔇</button>
+            <div class="cap"><div class="h5 mb-1">${s.displayName}</div>${badge(ct?.displayName || 'Standard', ct && hex(ct.highlightColor))}${badge(s.weapon.displayName)}</div>
+          </div>
+        </div>`;
+    };
+
+    const rail = (s, t) => `
+      <div class="d-flex justify-content-between align-items-center mt-5 mb-3"><h4 class="sec m-0">${capitalizeFirstLetter(s)}</h4><a href="#${s}">View all</a></div>
+      <div class="rail ${T[t].layout}">${D[t].map(x => card(t, x, '')).join('')}</div>`;
+
+    const picks = () => D.skins.filter(s => vids(s).length).sort(() => Math.random() - .5).slice(0, 3).map(feat).join('');
+
+    const shuffle = () => {
+      const el = document.getElementById('feats');
+      el.style.opacity = 0;
+      setTimeout(() => { el.innerHTML = picks(); el.style.opacity = 1; }, 200);
+    };
+
+    const showcase = () => {
+      const el = document.getElementById('showcase'), hero = el.parentNode;
+      let i = D.agents.indexOf(rand(D.agents));
+      const tick = () => {
+        const a = D.agents[i++ % D.agents.length];
+        hero.style.setProperty('--glow', hex(a.backgroundGradientColors?.[0]));
+        new Image().src = D.agents[i % D.agents.length].fullPortrait || '';
+        el.onclick = () => show('agents', a.uuid);
+        el.innerHTML = `<div class="showname">${a.displayName}</div>${im(a.fullPortrait || a.displayIcon, 'hero-art')}
+          <div class="cap"><div class="h2 m-0">${a.displayName}</div>${badge(a.role?.displayName || '', null, a.role?.displayIcon)}<div class="bar"></div></div>`;
+      };
+      tick();
+      timer = setInterval(tick, 6000);
+    };
+
+    const home = () => {
+      const fs = picks();
+      return `
+        <section class="hero">
+          <div id="showcase" class="showcase d-none d-md-block"></div>
+          <div class="position-relative" style="max-width: 540px">
+            <h1>VALORANT,<br>catalogued.</h1>
+            <p class="text-muted fs-5 mt-3 mb-4">Explore Valorant agents, abilities, maps, weapons, skins, and competitive ranks, powered directly by the public VALORANT API.</p>
+            <div class="d-flex flex-wrap gap-2">
+              ${Object.entries(SECTIONS).map(([s, ts]) => `<a class="btn btn-outline-danger" href="#${s}">${capitalizeFirstLetter(s)}: ${ts.map(t => D[t].length + ' ' + T[t].title.toLowerCase()).join(', ')}</a>`).join('')}
+            </div>
+          </div>
+        </section>
+        ${fs ? `<div class="d-flex justify-content-between align-items-center mb-3"><h4 class="sec m-0">Featured skin previews</h4><button class="btn btn-outline-danger btn-sm" onclick="shuffle()">⟳ Shuffle</button></div><div class="row g-3" id="feats">${fs}</div>` : ''}
+        ${rail('agents', 'agents')}${rail('maps', 'maps')}`;
+    };
+
+    const section = s => {
+      const ts = SECTIONS[s];
+      return `<h4 class="sec my-3">${capitalizeFirstLetter(s)}</h4>` + chips(['All', ...new Set(ts.flatMap(t => D[t].map(T[t].cat)))]) +
+        groups(ts.map(t => [t, D[t].filter(x => filter == 'All' || T[t].cat(x) == filter)]));
+    };
+
+    const results = () => `<h4 class="sec my-3">Results for “${q.replace(/</g, '&lt;')}”</h4>` + chips(['All', ...Object.values(T).map(t => t.title)]) +
+      groups(Object.keys(T).map(t => [t, D[t].filter(x => (filter == 'All' || T[t].title == filter) &&
+        [name(x), T[t].tag(x), T[t].text(x)].join(' ').toLowerCase().includes(q))]));
+
+    const route = () => {
+      const h = location.hash.slice(1), s = SECTIONS[h] ? h : 'home';
+      elNav.querySelectorAll('a').forEach(a => a.className = 'nav-link' + (!q && a.hash == '#' + s ? ' active' : ''));
+      clearInterval(timer);
+      elApp.innerHTML = q ? results() : s == 'home' ? home() : section(s);
+      if (!q && s == 'home') showcase();
+    };
+
+    const show = (t, key) => {
+      const x = D[t].find(y => id(y) == key);
+      elTitle.textContent = name(x);
+      elBody.innerHTML = T[t].detail(x);
+      bootstrap.Modal.getOrCreateInstance(elDetail).show();
+      elBody.querySelector('audio, video')?.play().catch(() => { });
+    };
+
+    const goSearch = s => {
+      bootstrap.Modal.getInstance(elDetail).hide();
+      elSearch.value = s;
+      elSearch.oninput();
+    };
+
+    const load = async () => {
+      elApp.innerHTML = SPINNER;
+      try {
+        const [agents, maps, weapons, themes, tiers, ctiers, bundles] = await Promise.all(
+          ['agents?isPlayableCharacter=true', 'maps', 'weapons', 'themes', 'competitivetiers', 'contenttiers', 'bundles'].map(p => api(p).catch(e => { if (p != 'bundles') throw e; return []; })));
+        TH = Object.fromEntries(themes.map(t => [t.uuid, t.displayName]));
+        CT = Object.fromEntries(ctiers.map(t => [t.uuid, t]));
+        D = {
+          agents, maps, weapons,
+          abilities: agents.flatMap(a => (a.abilities || []).map(b => ({ ...b, agent: a, uuid: a.uuid + b.slot }))),
+          skins: weapons.flatMap(w => w.skins.map(s => ({ ...s, weapon: w, img: s.displayIcon || s.chromas[0]?.fullRender }))).filter(s => s.img),
+          ranks: tiers.at(-1).tiers.filter(t => t.largeIcon)
+        };
+        D.bundles = makeBundles(D.skins, bundles);
+        route();
+      } catch (e) {
+        elApp.innerHTML = `<div class="alert alert-danger my-4">Could not load VALORANT data (${e.message}).
+          <button class="btn btn-sm btn-danger ms-2" onclick="load()">Retry</button></div>`;
+      }
+    };
+
+    elNav.innerHTML = ['home', ...Object.keys(SECTIONS)].map(s => `<li class="nav-item"><a class="nav-link" href="#${s}">${capitalizeFirstLetter(s)}</a></li>`).join('');
+    elSearch.oninput = () => { q = elSearch.value.trim().toLowerCase(); filter = 'All'; pg = {}; limit = 48; D && route(); };
+    elApp.addEventListener('error', e => e.target.matches('.feat video') && e.target.closest('.col-md-4').remove(), true);
+    window.onhashchange = () => { elSearch.value = q = ''; filter = 'All'; pg = {}; limit = 48; D && route(); };
+    var c = cols();
+    window.onresize = () => { if (c != cols()) { c = cols(); D && (q || SECTIONS[location.hash.slice(1)]) && route(); } };
+    elDetail.addEventListener('hidden.bs.modal', () => elBody.innerHTML = '');
+    elBody.addEventListener('error', e => {
+      if (!e.target.matches('audio, video')) return;
+      const sec = e.target.closest('.media-sec');
+      e.target.remove();
+      if (sec && !sec.querySelector('audio, video')) sec.remove();
+    }, true);
+
+    load();
+  </script>
+</body>
+
+</html>
