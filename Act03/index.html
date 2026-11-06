@@ -30,19 +30,16 @@
     .form-control { background: rgba(23, 34, 46, .8); border: 1px solid var(--line); color: var(--ink); border-radius: 4px; padding: .75rem 1rem; }
     .form-control:focus { background: var(--panel); color: var(--ink); border-color: var(--red); box-shadow: 0 0 0 3px rgba(255, 70, 86, .15), 0 0 22px rgba(255, 70, 86, .3); }
     .search { max-width: 560px; border-color: rgba(255, 70, 86, .35); transition: border-color .2s, box-shadow .2s; box-shadow: 0 0 18px rgba(255, 70, 86, .22), inset 0 0 10px rgba(255, 70, 86, .06); }
-    .btn { border-radius: 2px; font-weight: 600; }
-    .btn-danger { --bs-btn-bg: var(--red); --bs-btn-border-color: var(--red); --bs-btn-hover-bg: #e03a49; --bs-btn-hover-border-color: #e03a49; }
-    .btn-outline-danger { --bs-btn-color: var(--red); --bs-btn-border-color: var(--line); --bs-btn-hover-bg: var(--red); --bs-btn-hover-border-color: var(--red); --bs-btn-hover-color: #fff; --bs-btn-active-bg: var(--red); --bs-btn-active-border-color: var(--red); transition: box-shadow .2s, color .15s, background-color .15s, border-color .15s; }
-    .btn-outline-danger:hover { box-shadow: 0 0 14px rgba(255, 70, 86, .4); }
-    .pager { display: flex; width: fit-content; background: rgba(23, 34, 46, .8); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
-    .pager button { background: none; border: 0; color: var(--ink); font-weight: 600; padding: .55rem 1.1rem; transition: background .15s; }
-    .pager button:hover:not(:disabled) { background: rgba(255, 70, 86, .16); }
-    .pager button:focus-visible { outline: 2px solid var(--red); outline-offset: -2px; }
+    .btn { --bs-btn-hover-bg: #2f8fc8; --bs-btn-active-bg: #2f8fc8; }
+    :is(.btn, .pager button, .tab) { --hex: polygon(12px 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0 50%); position: relative; border: 0; clip-path: var(--hex); padding: var(--bs-btn-padding-y, .5rem) 1.6rem; background: #2f8fc8; color: #fff; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; text-shadow: 0 0 8px #4cc3ff; }
+    :is(.btn, .pager button, .tab)::before { content: ""; position: absolute; inset: 2px; z-index: -1; clip-path: var(--hex); background: linear-gradient(#134a73, #08263f); box-shadow: inset 0 0 0 1px rgba(76, 195, 255, .35); transition: background .2s; }
+    :is(.btn, .pager button, .tab):is(:hover:not(:disabled), :focus-visible, .on)::before { background: linear-gradient(#69d6ff, #1688d6); }
+    .tab { margin: 0 .5rem .5rem 0; }
+    .hero a.btn::before { background: linear-gradient(100deg, #1e5fae, #c9303f); }
+    .hero a.btn:is(:hover, :focus-visible)::before { background: linear-gradient(100deg, #3b8de8, #ff4656); }
+    .pager { display: flex; align-items: center; gap: .5rem; width: fit-content; }
     .pager button:disabled { color: var(--mute); opacity: .5; cursor: default; }
-    .pager span { min-width: 5.5rem; padding: .55rem 1rem; text-align: center; color: var(--red); font-weight: 500; font-variant-numeric: tabular-nums; border: solid var(--line); border-width: 0 1px; }
-    .tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--mute); padding: .4rem .9rem; font-weight: 600; }
-    .tab:hover, .tab.on { color: var(--ink); border-color: var(--red); }
-    .tab.on { text-shadow: 0 0 10px rgba(255, 70, 86, .45); }
+    .pager span { min-width: 5.5rem; text-align: center; color: var(--red); font-weight: 500; font-variant-numeric: tabular-nums; }
     .hero { position: relative; padding: 3rem 2rem; margin: 3rem 0 2rem; transition: --glow 1s; background: radial-gradient(520px 420px at 85% 70%, color-mix(in srgb, var(--glow) 55%, transparent), transparent), linear-gradient(115deg, rgba(255, 70, 86, .32), rgba(23, 34, 46, .9) 62%), var(--panel); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 0 40px rgba(255, 70, 86, .08); }
     .hero h1 { font: 800 clamp(2.2rem, 5.5vw, 4rem) / .95 'Oxanium', 'Barlow Condensed', sans-serif; text-shadow: 0 0 24px rgba(255, 70, 86, .35); }
     .showcase { position: absolute; right: 3%; bottom: 0; width: 42%; height: 130%; cursor: pointer; }
@@ -415,7 +412,7 @@
     };
 
     const rail = (s, t) => `
-      <div class="d-flex justify-content-between align-items-center mt-5 mb-3"><h4 class="sec m-0">${capitalizeFirstLetter(s)}</h4><a href="#${s}">View all</a></div>
+      <div class="d-flex justify-content-between align-items-center mt-5 mb-3"><h4 class="sec m-0">${capitalizeFirstLetter(s)}</h4><a class="btn" href="#${s}">View all</a></div>
       <div class="rail ${T[t].layout}">${D[t].map(x => card(t, x, '')).join('')}</div>`;
 
     let raf, ctrl;
